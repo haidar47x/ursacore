@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class UrsacoreApplication {
+public class UrsaCoreApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(UrsacoreApplication.class, args);
+        SpringApplication.run(UrsaCoreApplication.class, args);
     }
 
 }
