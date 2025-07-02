@@ -1,6 +1,6 @@
 package com.ursacore.service;
 
-import com.ursacore.model.Sample;
+import com.ursacore.model.SampleDTO;
 import com.ursacore.model.SampleStatus;
 import com.ursacore.model.SampleType;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +15,10 @@ import java.util.*;
 @Service
 public class SampleServiceImpl implements SampleService {
 
-    private final Map<UUID, Sample> sampleMap;
+    private final Map<UUID, SampleDTO> sampleMap;
 
     public SampleServiceImpl() {
-        Sample s1 = Sample.builder()
+        SampleDTO s1 = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
                 .sampleCode("87ED")
@@ -29,7 +29,7 @@ public class SampleServiceImpl implements SampleService {
                 .updateAt(LocalDateTime.now())
             .build();
 
-        Sample s2 = Sample.builder()
+        SampleDTO s2 = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
                 .sampleCode("82ED")
@@ -40,7 +40,7 @@ public class SampleServiceImpl implements SampleService {
                 .updateAt(LocalDateTime.now())
             .build();
 
-        Sample s3 = Sample.builder()
+        SampleDTO s3 = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
                 .sampleCode("85ED")
@@ -58,39 +58,39 @@ public class SampleServiceImpl implements SampleService {
     }
 
     @Override
-    public List<Sample> listSamples() {
+    public List<SampleDTO> listSamples() {
         return new ArrayList<>(sampleMap.values());
     }
 
     @Override
-    public Optional<Sample> getSampleById(UUID sampleId) {
+    public Optional<SampleDTO> getSampleById(UUID sampleId) {
         return Optional.of(sampleMap.get(sampleId));
     }
 
     @Override
-    public Sample saveNewSample(Sample sample) {
-        Sample savedSample = Sample.builder()
+    public SampleDTO saveNewSample(SampleDTO sampleDTO) {
+        SampleDTO savedSampleDTO = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
-                .sampleCode(sample.getSampleCode())
-                .type(sample.getType())
-                .status(sample.getStatus())
+                .sampleCode(sampleDTO.getSampleCode())
+                .type(sampleDTO.getType())
+                .status(sampleDTO.getStatus())
                 .collectedAt(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
             .build();
 
-        sampleMap.put(savedSample.getId(), savedSample);
-        return savedSample;
+        sampleMap.put(savedSampleDTO.getId(), savedSampleDTO);
+        return savedSampleDTO;
     }
 
     @Override
-    public void updateSampleById(UUID sampleId, Sample sample) {
-        Sample existing = sampleMap.get(sampleId);
+    public void updateSampleById(UUID sampleId, SampleDTO sampleDTO) {
+        SampleDTO existing = sampleMap.get(sampleId);
         existing.setUpdateAt(LocalDateTime.now());
-        existing.setStatus(sample.getStatus());
-        existing.setType(sample.getType());
-        existing.setSampleCode(sample.getSampleCode());
+        existing.setStatus(sampleDTO.getStatus());
+        existing.setType(sampleDTO.getType());
+        existing.setSampleCode(sampleDTO.getSampleCode());
     }
 
     @Override
@@ -99,18 +99,18 @@ public class SampleServiceImpl implements SampleService {
     }
 
     @Override
-    public void patchSampleById(UUID sampleId, Sample sample) {
-        Sample existing = sampleMap.get(sampleId);
-        if (sample.getSampleCode() != null) {
-            existing.setSampleCode(sample.getSampleCode());
+    public void patchSampleById(UUID sampleId, SampleDTO sampleDTO) {
+        SampleDTO existing = sampleMap.get(sampleId);
+        if (sampleDTO.getSampleCode() != null) {
+            existing.setSampleCode(sampleDTO.getSampleCode());
         }
 
-        if (sample.getStatus() != null) {
-            existing.setStatus(sample.getStatus());
+        if (sampleDTO.getStatus() != null) {
+            existing.setStatus(sampleDTO.getStatus());
         }
 
-        if (sample.getType() != null) {
-            existing.setType(sample.getType());
+        if (sampleDTO.getType() != null) {
+            existing.setType(sampleDTO.getType());
         }
     }
 }

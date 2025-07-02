@@ -1,9 +1,8 @@
 package com.ursacore.controller;
 
 import com.ursacore.exceptions.NotFoundException;
-import com.ursacore.model.Sample;
+import com.ursacore.model.SampleDTO;
 import com.ursacore.service.SampleService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -25,26 +24,26 @@ public class SampleController {
     public final SampleService sampleService;
 
     @GetMapping(SAMPLE_PATH)
-    public List<Sample> listSamples() {
+    public List<SampleDTO> listSamples() {
         return sampleService.listSamples();
     }
 
     @GetMapping(SAMPLE_PATH_ID)
-    public Sample getSampleById(@PathVariable("sampleId") UUID sampleId) {
+    public SampleDTO getSampleById(@PathVariable("sampleId") UUID sampleId) {
         return sampleService.getSampleById(sampleId).orElseThrow(NotFoundException::new);
     }
 
     @PostMapping(SAMPLE_PATH)
-    public ResponseEntity createSample(@RequestBody Sample sample) {
-        Sample savedSample = sampleService.saveNewSample(sample);
+    public ResponseEntity createSample(@RequestBody SampleDTO sampleDTO) {
+        SampleDTO savedSampleDTO = sampleService.saveNewSample(sampleDTO);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "/api/v1/sample/" + savedSample.getId().toString());
+        headers.add("Location", "/api/v1/sample/" + savedSampleDTO.getId().toString());
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
     @PutMapping(SAMPLE_PATH_ID)
-    public ResponseEntity updateSampleById(@PathVariable("sampleId") UUID sampleId, @RequestBody Sample sample) {
-        sampleService.updateSampleById(sampleId, sample);
+    public ResponseEntity updateSampleById(@PathVariable("sampleId") UUID sampleId, @RequestBody SampleDTO sampleDTO) {
+        sampleService.updateSampleById(sampleId, sampleDTO);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
@@ -55,8 +54,8 @@ public class SampleController {
     }
 
     @PatchMapping(SAMPLE_PATH_ID)
-    public ResponseEntity patchSampleById(@PathVariable("sampleId") UUID sampleId, @RequestBody Sample sample) {
-        sampleService.patchSampleById(sampleId, sample);
+    public ResponseEntity patchSampleById(@PathVariable("sampleId") UUID sampleId, @RequestBody SampleDTO sampleDTO) {
+        sampleService.patchSampleById(sampleId, sampleDTO);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 

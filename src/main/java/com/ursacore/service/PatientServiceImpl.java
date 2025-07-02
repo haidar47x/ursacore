@@ -1,6 +1,6 @@
 package com.ursacore.service;
 
-import com.ursacore.model.Patient;
+import com.ursacore.model.PatientDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -13,10 +13,10 @@ import java.util.*;
 @Service
 public class PatientServiceImpl implements PatientService {
 
-    private final Map<UUID, Patient> patientMap;
+    private final Map<UUID, PatientDTO> patientMap;
 
     public PatientServiceImpl() {
-        Patient p1 = Patient.builder()
+        PatientDTO p1 = PatientDTO.builder()
                 .id(UUID.randomUUID())
                 .name("John Doe")
                 .version(1)
@@ -24,7 +24,7 @@ public class PatientServiceImpl implements PatientService {
                 .updateAt(LocalDateTime.now())
             .build();
 
-        Patient p2 = Patient.builder()
+        PatientDTO p2 = PatientDTO.builder()
                 .id(UUID.randomUUID())
                 .name("Jan Doe")
                 .version(1)
@@ -32,7 +32,7 @@ public class PatientServiceImpl implements PatientService {
                 .updateAt(LocalDateTime.now())
             .build();
 
-        Patient p3 = Patient.builder()
+        PatientDTO p3 = PatientDTO.builder()
                 .id(UUID.randomUUID())
                 .name("Jonas Doe")
                 .version(1)
@@ -47,33 +47,33 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public List<Patient> listPatients() {
+    public List<PatientDTO> listPatients() {
         return new ArrayList<>(patientMap.values());
     }
 
     @Override
-    public Optional<Patient> getPatientById(UUID patientId) {
+    public Optional<PatientDTO> getPatientById(UUID patientId) {
         return Optional.of(patientMap.get(patientId));
     }
 
     @Override
-    public Patient createNewPatient(Patient patient) {
-        Patient savedPatient = Patient.builder()
+    public PatientDTO createNewPatient(PatientDTO patientDTO) {
+        PatientDTO savedPatientDTO = PatientDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
-                .name(patient.getName())
+                .name(patientDTO.getName())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
             .build();
 
-        patientMap.put(savedPatient.getId(), savedPatient);
-        return savedPatient;
+        patientMap.put(savedPatientDTO.getId(), savedPatientDTO);
+        return savedPatientDTO;
     }
 
     @Override
-    public void updatePatientById(UUID patientId, Patient patient) {
-        Patient existing = patientMap.get(patientId);
-        existing.setName(patient.getName());
+    public void updatePatientById(UUID patientId, PatientDTO patientDTO) {
+        PatientDTO existing = patientMap.get(patientId);
+        existing.setName(patientDTO.getName());
         existing.setUpdateAt(LocalDateTime.now());
     }
 
@@ -83,11 +83,11 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void patchPatientById(UUID patientId, Patient patient) {
-        Patient existing = patientMap.get(patientId);
+    public void patchPatientById(UUID patientId, PatientDTO patientDTO) {
+        PatientDTO existing = patientMap.get(patientId);
 
-        if (patient.getName() != null) {
-            existing.setName(patient.getName());
+        if (patientDTO.getName() != null) {
+            existing.setName(patientDTO.getName());
         }
     }
 }

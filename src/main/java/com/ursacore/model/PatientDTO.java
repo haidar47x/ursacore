@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Builder
 @Data
-public class Patient {
+public class PatientDTO {
 
     private UUID id;
     private Integer version;

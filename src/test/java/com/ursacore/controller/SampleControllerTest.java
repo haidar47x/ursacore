@@ -1,7 +1,7 @@
 package com.ursacore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ursacore.model.Sample;
+import com.ursacore.model.SampleDTO;
 import com.ursacore.service.SampleService;
 import com.ursacore.service.SampleServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +41,7 @@ class SampleControllerTest {
     SampleService sampleService;
 
     @Captor
-    ArgumentCaptor<Sample> sampleArgumentCaptor;
+    ArgumentCaptor<SampleDTO> sampleArgumentCaptor;
 
     @Captor
     ArgumentCaptor<UUID> uuidArgumentCaptor;
@@ -66,77 +66,77 @@ class SampleControllerTest {
 
     @Test
     void testGetSampleById() throws Exception {
-        Sample testSample = sampleServiceImpl.listSamples().getFirst();
-        given(sampleService.getSampleById(testSample.getId())).willReturn(Optional.of(testSample));
+        SampleDTO testSampleDTO = sampleServiceImpl.listSamples().getFirst();
+        given(sampleService.getSampleById(testSampleDTO.getId())).willReturn(Optional.of(testSampleDTO));
 
-        mockMvc.perform(get(SampleController.SAMPLE_PATH_ID, testSample.getId().toString())
+        mockMvc.perform(get(SampleController.SAMPLE_PATH_ID, testSampleDTO.getId().toString())
                     .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(testSample.getId().toString())))
-                .andExpect(jsonPath("$.sampleCode", is(testSample.getSampleCode())));
+                .andExpect(jsonPath("$.id", is(testSampleDTO.getId().toString())))
+                .andExpect(jsonPath("$.sampleCode", is(testSampleDTO.getSampleCode())));
     }
 
     @Test
     void testCreateNewSample() throws Exception {
-        Sample sample = sampleServiceImpl.listSamples().getFirst();
+        SampleDTO sampleDTO = sampleServiceImpl.listSamples().getFirst();
         /* Version and ID are null because we want to mimic a new Sample object. */
-        sample.setVersion(null);
-        sample.setId(null);
-        given(sampleService.saveNewSample(any(Sample.class))).willReturn(sampleServiceImpl.listSamples().get(1));
+        sampleDTO.setVersion(null);
+        sampleDTO.setId(null);
+        given(sampleService.saveNewSample(any(SampleDTO.class))).willReturn(sampleServiceImpl.listSamples().get(1));
 
         mockMvc.perform(post(SampleController.SAMPLE_PATH)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(sample)))
+                .content(objectMapper.writeValueAsString(sampleDTO)))
             .andExpect(status().isCreated())
             .andExpect(header().exists("Location"));
     }
 
     @Test
     void testUpdateSample() throws Exception {
-        Sample sample = sampleServiceImpl.listSamples().getFirst();
+        SampleDTO sampleDTO = sampleServiceImpl.listSamples().getFirst();
 
-        mockMvc.perform(put(SampleController.SAMPLE_PATH_ID, sample.getId())
+        mockMvc.perform(put(SampleController.SAMPLE_PATH_ID, sampleDTO.getId())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(sample)))
+                .content(objectMapper.writeValueAsString(sampleDTO)))
                 .andExpect(status().isNoContent());
 
         /* Verify updateSampleById was called with the given ID */
-        verify(sampleService).updateSampleById(eq(sample.getId()), any(Sample.class));
+        verify(sampleService).updateSampleById(eq(sampleDTO.getId()), any(SampleDTO.class));
     }
 
     @Test
     void testDeleteSample() throws Exception {
-        Sample sample = sampleServiceImpl.listSamples().getFirst();
+        SampleDTO sampleDTO = sampleServiceImpl.listSamples().getFirst();
 
-        mockMvc.perform(delete(SampleController.SAMPLE_PATH_ID, sample.getId())
+        mockMvc.perform(delete(SampleController.SAMPLE_PATH_ID, sampleDTO.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
         verify(sampleService).deleteById(uuidArgumentCaptor.capture());
-        assertThat(sample.getId()).isEqualTo(uuidArgumentCaptor.getValue());
+        assertThat(sampleDTO.getId()).isEqualTo(uuidArgumentCaptor.getValue());
     }
 
     @Test
     void testPatchSample() throws Exception {
-        Sample sample = sampleServiceImpl.listSamples().getFirst();
+        SampleDTO sampleDTO = sampleServiceImpl.listSamples().getFirst();
         Map<String, Object> sampleMap = new HashMap<>();
         sampleMap.put("sampleCode", "AA33");
 
-        mockMvc.perform(patch(SampleController.SAMPLE_PATH_ID, sample.getId())
+        mockMvc.perform(patch(SampleController.SAMPLE_PATH_ID, sampleDTO.getId())
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(sample)))
+                    .content(objectMapper.writeValueAsString(sampleDTO)))
                 .andExpect(status().isNoContent());
         /*
           The captors will contain values that were passed to the mocked service method.
           We want to make sure that all the critical parts are covered by the tests.
          */
         verify(sampleService).patchSampleById(uuidArgumentCaptor.capture(), sampleArgumentCaptor.capture());
-        assertThat(sample.getId()).isEqualTo(uuidArgumentCaptor.getValue());
-        assertThat(sample.getSampleCode()).isEqualTo(sampleArgumentCaptor.getValue().getSampleCode());
+        assertThat(sampleDTO.getId()).isEqualTo(uuidArgumentCaptor.getValue());
+        assertThat(sampleDTO.getSampleCode()).isEqualTo(sampleArgumentCaptor.getValue().getSampleCode());
     }
 
     @Test

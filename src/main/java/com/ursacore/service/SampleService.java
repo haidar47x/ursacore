@@ -1,6 +1,6 @@
 package com.ursacore.service;
 
-import com.ursacore.model.Sample;
+import com.ursacore.model.SampleDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,15 +8,15 @@ import java.util.UUID;
 
 public interface SampleService {
 
-    List<Sample> listSamples();
+    List<SampleDTO> listSamples();
 
-    Optional<Sample> getSampleById(UUID sampleId);
+    Optional<SampleDTO> getSampleById(UUID sampleId);
 
-    Sample saveNewSample(Sample sample);
+    SampleDTO saveNewSample(SampleDTO sampleDTO);
 
-    void updateSampleById(UUID sampleId, Sample sample);
+    void updateSampleById(UUID sampleId, SampleDTO sampleDTO);
 
     void deleteById(UUID sampleId);
 
-    void patchSampleById(UUID sampleId, Sample sample);
+    void patchSampleById(UUID sampleId, SampleDTO sampleDTO);
 }

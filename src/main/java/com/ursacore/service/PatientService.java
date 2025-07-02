@@ -1,6 +1,6 @@
 package com.ursacore.service;
 
-import com.ursacore.model.Patient;
+import com.ursacore.model.PatientDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,15 +8,15 @@ import java.util.UUID;
 
 public interface PatientService {
 
-    List<Patient> listPatients();
+    List<PatientDTO> listPatients();
 
-    Optional<Patient> getPatientById(UUID patientId);
+    Optional<PatientDTO> getPatientById(UUID patientId);
 
-    Patient createNewPatient(Patient patient);
+    PatientDTO createNewPatient(PatientDTO patientDTO);
 
-    void updatePatientById(UUID patientId, Patient patient);
+    void updatePatientById(UUID patientId, PatientDTO patientDTO);
 
     void deleteById(UUID patientId);
 
-    void patchPatientById(UUID patientId, Patient patient);
+    void patchPatientById(UUID patientId, PatientDTO patientDTO);
 }
