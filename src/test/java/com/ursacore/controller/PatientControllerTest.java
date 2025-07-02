@@ -1,6 +1,7 @@
 package com.ursacore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ursacore.exceptions.NotFoundException;
 import com.ursacore.model.Patient;
 import com.ursacore.service.PatientService;
 import com.ursacore.service.PatientServiceImpl;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -67,7 +69,7 @@ class PatientControllerTest {
     @Test
     void getPatientById() throws Exception {
         Patient testPatient = patientServiceImpl.listPatients().getFirst();
-        given(patientService.getPatientById(testPatient.getId())).willReturn(testPatient);
+        given(patientService.getPatientById(testPatient.getId())).willReturn(Optional.of(testPatient));
 
         mockMvc.perform(get(PatientController.PATIENT_PATH_ID, testPatient.getId())
                         .accept(MediaType.APPLICATION_JSON))
@@ -132,5 +134,13 @@ class PatientControllerTest {
         verify(patientService).patchPatientById(uuidArgumentCaptor.capture(), patientArgumentCaptor.capture());
         assertThat(patient.getId()).isEqualTo(uuidArgumentCaptor.getValue());
         assertThat(patient.getName()).isEqualTo(patientArgumentCaptor.getValue().getName());
+    }
+
+    @Test
+    void testGetPatientByIdNotFound() throws Exception {
+        given(patientService.getPatientById(any(UUID.class))).willReturn(Optional.empty());
+
+        mockMvc.perform(get(PatientController.PATIENT_PATH_ID, UUID.randomUUID()))
+                .andExpect(status().isNotFound());
     }
 }

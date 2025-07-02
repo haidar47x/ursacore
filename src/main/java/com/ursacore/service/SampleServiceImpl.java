@@ -63,8 +63,8 @@ public class SampleServiceImpl implements SampleService {
     }
 
     @Override
-    public Sample getSampleById(UUID sampleId) {
-        return sampleMap.get(sampleId);
+    public Optional<Sample> getSampleById(UUID sampleId) {
+        return Optional.of(sampleMap.get(sampleId));
     }
 
     @Override

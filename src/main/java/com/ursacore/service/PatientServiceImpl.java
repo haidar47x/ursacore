@@ -52,8 +52,8 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Patient getPatientById(UUID patientId) {
-        return patientMap.get(patientId);
+    public Optional<Patient> getPatientById(UUID patientId) {
+        return Optional.of(patientMap.get(patientId));
     }
 
     @Override

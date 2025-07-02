@@ -1,5 +1,6 @@
 package com.ursacore.controller;
 
+import com.ursacore.exceptions.NotFoundException;
 import com.ursacore.model.Patient;
 import com.ursacore.service.PatientService;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ public class PatientController {
 
     @GetMapping(PATIENT_PATH_ID)
     public Patient getPatientById(@PathVariable("patientId") UUID patientId) {
-        return patientService.getPatientById(patientId);
+        return patientService.getPatientById(patientId).orElseThrow(NotFoundException::new);
     }
 
     @PostMapping(PATIENT_PATH)

@@ -3,13 +3,14 @@ package com.ursacore.service;
 import com.ursacore.model.Patient;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface PatientService {
 
     List<Patient> listPatients();
 
-    Patient getPatientById(UUID patientId);
+    Optional<Patient> getPatientById(UUID patientId);
 
     Patient createNewPatient(Patient patient);
 

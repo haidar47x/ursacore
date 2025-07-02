@@ -1,5 +1,6 @@
 package com.ursacore.controller;
 
+import com.ursacore.exceptions.NotFoundException;
 import com.ursacore.model.Sample;
 import com.ursacore.service.SampleService;
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ public class SampleController {
 
     @GetMapping(SAMPLE_PATH_ID)
     public Sample getSampleById(@PathVariable("sampleId") UUID sampleId) {
-        return sampleService.getSampleById(sampleId);
+        return sampleService.getSampleById(sampleId).orElseThrow(NotFoundException::new);
     }
 
     @PostMapping(SAMPLE_PATH)
@@ -58,4 +59,5 @@ public class SampleController {
         sampleService.patchSampleById(sampleId, sample);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
+
 }

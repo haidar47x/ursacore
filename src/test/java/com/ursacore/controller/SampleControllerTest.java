@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -66,7 +67,7 @@ class SampleControllerTest {
     @Test
     void testGetSampleById() throws Exception {
         Sample testSample = sampleServiceImpl.listSamples().getFirst();
-        given(sampleService.getSampleById(testSample.getId())).willReturn(testSample);
+        given(sampleService.getSampleById(testSample.getId())).willReturn(Optional.of(testSample));
 
         mockMvc.perform(get(SampleController.SAMPLE_PATH_ID, testSample.getId().toString())
                     .accept(MediaType.APPLICATION_JSON))
@@ -136,5 +137,13 @@ class SampleControllerTest {
         verify(sampleService).patchSampleById(uuidArgumentCaptor.capture(), sampleArgumentCaptor.capture());
         assertThat(sample.getId()).isEqualTo(uuidArgumentCaptor.getValue());
         assertThat(sample.getSampleCode()).isEqualTo(sampleArgumentCaptor.getValue().getSampleCode());
+    }
+
+    @Test
+    void testGetSampleByIdNotFound() throws Exception {
+        given(sampleService.getSampleById(any(UUID.class))).willReturn(Optional.empty());
+
+        mockMvc.perform(get(SampleController.SAMPLE_PATH_ID, UUID.randomUUID()))
+                .andExpect(status().isNotFound());
     }
 }
