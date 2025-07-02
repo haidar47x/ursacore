@@ -1,6 +1,6 @@
 package com.ursacore.controller;
 
-import com.ursacore.exceptions.NotFoundException;
+import com.ursacore.exception.NotFoundException;
 import com.ursacore.model.PatientDTO;
 import com.ursacore.service.PatientService;
 import lombok.AllArgsConstructor;
