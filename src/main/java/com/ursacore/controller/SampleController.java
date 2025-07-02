@@ -14,24 +14,26 @@ import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/sample")
 @RestController
 @Slf4j
 public class SampleController {
 
+    public static final String SAMPLE_PATH = "/api/v1/sample";
+    public static final String SAMPLE_PATH_ID = SAMPLE_PATH + "/{sampleId}";
+
     public final SampleService sampleService;
 
-    @GetMapping
+    @GetMapping(SAMPLE_PATH)
     public List<Sample> listSamples() {
         return sampleService.listSamples();
     }
 
-    @GetMapping("{sampleId}")
+    @GetMapping(SAMPLE_PATH_ID)
     public Sample getSampleById(@PathVariable("sampleId") UUID sampleId) {
         return sampleService.getSampleById(sampleId);
     }
 
-    @PostMapping
+    @PostMapping(SAMPLE_PATH)
     public ResponseEntity createSample(@RequestBody Sample sample) {
         Sample savedSample = sampleService.saveNewSample(sample);
         HttpHeaders headers = new HttpHeaders();
@@ -39,19 +41,19 @@ public class SampleController {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("{sampleId}")
+    @PutMapping(SAMPLE_PATH_ID)
     public ResponseEntity updateSampleById(@PathVariable("sampleId") UUID sampleId, @RequestBody Sample sample) {
         sampleService.updateSampleById(sampleId, sample);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("{sampleId}")
+    @DeleteMapping(SAMPLE_PATH_ID)
     public ResponseEntity deleteById(@PathVariable("sampleId") UUID sampleId) {
         sampleService.deleteById(sampleId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("{sampleId}")
+    @PatchMapping(SAMPLE_PATH_ID)
     public ResponseEntity patchSampleById(@PathVariable("sampleId") UUID sampleId, @RequestBody Sample sample) {
         sampleService.patchSampleById(sampleId, sample);
         return new ResponseEntity(HttpStatus.NO_CONTENT);

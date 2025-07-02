@@ -15,24 +15,26 @@ import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
-@RequestMapping("/api/v1/patient")
 @RestController
 @Slf4j
 public class PatientController {
 
+    public static final String PATIENT_PATH = "/api/v1/patient";
+    public static final String PATIENT_PATH_ID = PATIENT_PATH + "/{patientId}";
+
     private final PatientService patientService;
 
-    @GetMapping
+    @GetMapping(PATIENT_PATH)
     public List<Patient> listPatients() {
         return patientService.listPatients();
     }
 
-    @GetMapping("{patientId}")
+    @GetMapping(PATIENT_PATH_ID)
     public Patient getPatientById(@PathVariable("patientId") UUID patientId) {
         return patientService.getPatientById(patientId);
     }
 
-    @PostMapping
+    @PostMapping(PATIENT_PATH)
     public ResponseEntity createNewPatient(@RequestBody Patient patient) {
         Patient savedPatient = patientService.createNewPatient(patient);
         HttpHeaders headers = new HttpHeaders();
@@ -41,19 +43,19 @@ public class PatientController {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("{patientId}")
+    @PutMapping(PATIENT_PATH_ID)
     public ResponseEntity updatePatientById(@PathVariable("patientId") UUID patientId, @RequestBody Patient patient) {
         patientService.updatePatientById(patientId, patient);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("{patientId}")
+    @DeleteMapping(PATIENT_PATH_ID)
     public ResponseEntity deleteById(@PathVariable("patientId") UUID patientId) {
         patientService.deleteById(patientId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("{patientId}")
+    @PatchMapping(PATIENT_PATH_ID)
     public ResponseEntity deleteById(@PathVariable("patientId") UUID patientId, @RequestBody Patient patient) {
         patientService.patchPatientById(patientId, patient);
         return new ResponseEntity(HttpStatus.NO_CONTENT);

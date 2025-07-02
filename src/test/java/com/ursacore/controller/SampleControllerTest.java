@@ -1,18 +1,21 @@
 package com.ursacore.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ursacore.model.Sample;
 import com.ursacore.service.SampleService;
 import com.ursacore.service.SampleServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -36,13 +39,24 @@ class SampleControllerTest {
     @MockitoBean
     SampleService sampleService;
 
-    SampleServiceImpl sampleServiceImpl = new SampleServiceImpl();
+    @Captor
+    ArgumentCaptor<Sample> sampleArgumentCaptor;
+
+    @Captor
+    ArgumentCaptor<UUID> uuidArgumentCaptor;
+
+    SampleServiceImpl sampleServiceImpl;
+
+    @BeforeEach
+    void setUp() {
+        sampleServiceImpl = new SampleServiceImpl();
+    }
 
     @Test
     void testListSamples() throws Exception {
         given(sampleService.listSamples()).willReturn(sampleServiceImpl.listSamples());
 
-        mockMvc.perform(get("/api/v1/sample")
+        mockMvc.perform(get(SampleController.SAMPLE_PATH)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -54,7 +68,7 @@ class SampleControllerTest {
         Sample testSample = sampleServiceImpl.listSamples().getFirst();
         given(sampleService.getSampleById(testSample.getId())).willReturn(testSample);
 
-        mockMvc.perform(get("/api/v1/sample/" + testSample.getId().toString())
+        mockMvc.perform(get(SampleController.SAMPLE_PATH_ID, testSample.getId().toString())
                     .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -70,7 +84,7 @@ class SampleControllerTest {
         sample.setId(null);
         given(sampleService.saveNewSample(any(Sample.class))).willReturn(sampleServiceImpl.listSamples().get(1));
 
-        mockMvc.perform(post("/api/v1/sample")
+        mockMvc.perform(post(SampleController.SAMPLE_PATH)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(sample)))
@@ -82,7 +96,7 @@ class SampleControllerTest {
     void testUpdateSample() throws Exception {
         Sample sample = sampleServiceImpl.listSamples().getFirst();
 
-        mockMvc.perform(put("/api/v1/sample/" + sample.getId().toString())
+        mockMvc.perform(put(SampleController.SAMPLE_PATH_ID, sample.getId())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(sample)))
@@ -96,13 +110,31 @@ class SampleControllerTest {
     void testDeleteSample() throws Exception {
         Sample sample = sampleServiceImpl.listSamples().getFirst();
 
-        mockMvc.perform(delete("/api/v1/sample/" + sample.getId().toString())
+        mockMvc.perform(delete(SampleController.SAMPLE_PATH_ID, sample.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        ArgumentCaptor<UUID> uuidArgumentCaptor = ArgumentCaptor.forClass(UUID.class);
         verify(sampleService).deleteById(uuidArgumentCaptor.capture());
-
         assertThat(sample.getId()).isEqualTo(uuidArgumentCaptor.getValue());
+    }
+
+    @Test
+    void testPatchSample() throws Exception {
+        Sample sample = sampleServiceImpl.listSamples().getFirst();
+        Map<String, Object> sampleMap = new HashMap<>();
+        sampleMap.put("sampleCode", "AA33");
+
+        mockMvc.perform(patch(SampleController.SAMPLE_PATH_ID, sample.getId())
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(sample)))
+                .andExpect(status().isNoContent());
+        /*
+          The captors will contain values that were passed to the mocked service method.
+          We want to make sure that all the critical parts are covered by the tests.
+         */
+        verify(sampleService).patchSampleById(uuidArgumentCaptor.capture(), sampleArgumentCaptor.capture());
+        assertThat(sample.getId()).isEqualTo(uuidArgumentCaptor.getValue());
+        assertThat(sample.getSampleCode()).isEqualTo(sampleArgumentCaptor.getValue().getSampleCode());
     }
 }
