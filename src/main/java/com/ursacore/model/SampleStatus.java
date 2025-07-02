@@ -2,8 +2,8 @@ package com.ursacore.model;
 
 public enum SampleStatus {
     PROCESSING,
-    OBSERVED,
-    FINALIZED,
+    OBSERVING,
     REPORTING,
-    COMPLETE
+    FINALIZING,
+    COMPLETED
 }
