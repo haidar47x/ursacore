@@ -14,7 +14,7 @@ public interface SampleService {
 
     SampleDTO saveNewSample(SampleDTO sampleDTO);
 
-    void updateSampleById(UUID sampleId, SampleDTO sampleDTO);
+    Optional<SampleDTO> updateSampleById(UUID sampleId, SampleDTO sampleDTO);
 
     void deleteById(UUID sampleId);
 

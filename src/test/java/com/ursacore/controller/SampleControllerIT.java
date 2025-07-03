@@ -2,6 +2,7 @@ package com.ursacore.controller;
 
 import com.ursacore.entity.Sample;
 import com.ursacore.exception.NotFoundException;
+import com.ursacore.mapper.SampleMapper;
 import com.ursacore.model.SampleDTO;
 import com.ursacore.model.SampleStatus;
 import com.ursacore.model.SampleType;
@@ -30,6 +31,9 @@ class SampleControllerIT {
     @Autowired
     SampleRepository sampleRepository;
 
+    @Autowired
+    SampleMapper sampleMapper;
+
     @Test
     void testListSamples() {
         List<SampleDTO> dtos = sampleController.listSamples();
@@ -49,8 +53,8 @@ class SampleControllerIT {
 
     @Test
     void testGetSampleById() {
-        Sample sample = sampleRepository.findAll().getFirst();
-        SampleDTO dto = sampleController.getSampleById(sample.getId());
+        var sample = sampleRepository.findAll().getFirst();
+        var dto = sampleController.getSampleById(sample.getId());
 
         assertThat(dto).isNotNull();
         assertThat(dto.getId()).isEqualTo(sample.getId());
@@ -79,5 +83,24 @@ class SampleControllerIT {
         var savedUuid = UUID.fromString(savedUri.split("/")[4]);
         var savedSample = sampleRepository.findById(savedUuid);
         assertThat(savedSample).isNotNull();
+    }
+
+    @Rollback
+    @Transactional
+    @Test
+    void testUpdateSampleById() {
+        var sample = sampleRepository.findAll().getFirst();
+        var sampleDto = sampleMapper.sampleToSampleDto(sample);
+        sampleDto.setId(null);
+        sampleDto.setVersion(null);
+
+        final String sampleDtoCode = "832F";
+        sampleDto.setSampleCode(sampleDtoCode);
+
+        var responseEntity = sampleController.updateSampleById(sample.getId(), sampleDto);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+
+        var savedSample = sampleRepository.findById(sample.getId()).get();
+        assertThat(savedSample.getSampleCode()).isEqualTo("832F");
     }
 }

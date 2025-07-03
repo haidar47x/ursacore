@@ -4,7 +4,6 @@ import com.ursacore.model.SampleDTO;
 import com.ursacore.model.SampleStatus;
 import com.ursacore.model.SampleType;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -84,7 +83,7 @@ public class SampleServiceImpl implements SampleService {
     }
 
     @Override
-    public void updateSampleById(UUID sampleId, SampleDTO sampleDTO) {
+    public Optional<SampleDTO> updateSampleById(UUID sampleId, SampleDTO sampleDTO) {
         SampleDTO existing = sampleMap.get(sampleId);
         existing.setUpdateAt(LocalDateTime.now());
         existing.setStatus(sampleDTO.getStatus());

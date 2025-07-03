@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Primary
@@ -41,8 +42,19 @@ public class SampleServiceJPA implements SampleService {
     }
 
     @Override
-    public void updateSampleById(UUID sampleId, SampleDTO sampleDTO) {
+    public Optional<SampleDTO> updateSampleById(UUID sampleId, SampleDTO sampleDTO) {
+        AtomicReference<Optional<SampleDTO>> atomicReference = new AtomicReference<>();
 
+        sampleRepository.findById(sampleId).ifPresentOrElse(foundSample -> {
+            foundSample.setSampleCode(sampleDTO.getSampleCode());
+            foundSample.setStatus(sampleDTO.getStatus());
+            foundSample.setType(sampleDTO.getType());
+            foundSample.setCollectedAt(sampleDTO.getCollectedAt());
+            var savedSample = sampleRepository.save(foundSample);
+            atomicReference.set(Optional.of(sampleMapper.sampleToSampleDto(savedSample)));
+        }, () -> atomicReference.set(Optional.empty()));
+
+        return atomicReference.get();
     }
 
     @Override
