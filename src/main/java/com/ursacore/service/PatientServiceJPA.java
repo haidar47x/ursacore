@@ -1,6 +1,9 @@
 package com.ursacore.service;
 
+import com.ursacore.mapper.PatientMapper;
 import com.ursacore.model.PatientDTO;
+import com.ursacore.repository.PatientRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +13,12 @@ import java.util.UUID;
 
 @Primary
 @Service
+@AllArgsConstructor
 public class PatientServiceJPA implements PatientService {
+
+    private final PatientRepository patientRepository;
+    private final PatientMapper patientMapper;
+
     @Override
     public List<PatientDTO> listPatients() {
         return List.of();

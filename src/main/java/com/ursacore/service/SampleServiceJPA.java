@@ -1,6 +1,9 @@
 package com.ursacore.service;
 
+import com.ursacore.mapper.SampleMapper;
 import com.ursacore.model.SampleDTO;
+import com.ursacore.repository.SampleRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +13,12 @@ import java.util.UUID;
 
 @Primary
 @Service
+@AllArgsConstructor
 public class SampleServiceJPA implements SampleService {
+
+    private final SampleRepository sampleRepository;
+    private final SampleMapper samplerMapper;
+
     @Override
     public List<SampleDTO> listSamples() {
         return List.of();
