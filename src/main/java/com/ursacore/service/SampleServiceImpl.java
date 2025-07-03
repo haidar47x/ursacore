@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
-@Primary
 @Service
 public class SampleServiceImpl implements SampleService {
 

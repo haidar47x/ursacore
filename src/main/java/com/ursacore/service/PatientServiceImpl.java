@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
-@Primary
 @Service
 public class PatientServiceImpl implements PatientService {
 
