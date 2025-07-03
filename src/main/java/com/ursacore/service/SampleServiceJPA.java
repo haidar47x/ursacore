@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Primary
 @Service
@@ -17,21 +18,26 @@ import java.util.UUID;
 public class SampleServiceJPA implements SampleService {
 
     private final SampleRepository sampleRepository;
-    private final SampleMapper samplerMapper;
+    private final SampleMapper sampleMapper;
 
     @Override
     public List<SampleDTO> listSamples() {
-        return List.of();
+        return sampleRepository.findAll()
+                .stream()
+                .map(sampleMapper::sampleToSampleDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Optional<SampleDTO> getSampleById(UUID sampleId) {
-        return Optional.empty();
+        return Optional.ofNullable(
+                sampleMapper.sampleToSampleDto(
+                        sampleRepository.findById(sampleId).orElse(null)));
     }
 
     @Override
     public SampleDTO saveNewSample(SampleDTO sampleDTO) {
-        return null;
+        return sampleMapper.sampleToSampleDto(sampleRepository.save(sampleMapper.sampleDtoToSample(sampleDTO)));
     }
 
     @Override

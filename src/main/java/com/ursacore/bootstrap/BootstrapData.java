@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -26,6 +27,9 @@ public class BootstrapData implements CommandLineRunner {
     }
 
     public void initSampleData() {
+
+        if (sampleRepository.count() > 0) return;
+
         Sample s1 = Sample.builder()
                 .sampleCode("87ED")
                 .status(SampleStatus.PROCESSING)
@@ -53,12 +57,13 @@ public class BootstrapData implements CommandLineRunner {
                 .updateAt(LocalDateTime.now())
                 .build();
 
-        sampleRepository.save(s1);
-        sampleRepository.save(s2);
-        sampleRepository.save(s3);
+        sampleRepository.saveAll(List.of(s1, s2, s3));
     }
 
     public void initPatientData() {
+
+        if (patientRepository.count() > 0) return;
+
         Patient p1 = Patient.builder()
                 .name("John Doe")
                 .createdAt(LocalDateTime.now())
@@ -77,8 +82,6 @@ public class BootstrapData implements CommandLineRunner {
                 .updateAt(LocalDateTime.now())
                 .build();
 
-        patientRepository.save(p1);
-        patientRepository.save(p2);
-        patientRepository.save(p3);
+        patientRepository.saveAll(List.of(p1, p2, p3));
     }
 }

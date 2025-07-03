@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Primary
 @Service
@@ -21,12 +22,17 @@ public class PatientServiceJPA implements PatientService {
 
     @Override
     public List<PatientDTO> listPatients() {
-        return List.of();
+        return patientRepository.findAll()
+                .stream()
+                .map(patientMapper::patientToPatientDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Optional<PatientDTO> getPatientById(UUID patientId) {
-        return Optional.empty();
+        return Optional.ofNullable(
+                patientMapper.patientToPatientDto(
+                        patientRepository.findById(patientId).orElse(null)));
     }
 
     @Override
