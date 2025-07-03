@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,29 +35,29 @@ public class SampleController {
     }
 
     @PostMapping(SAMPLE_PATH)
-    public ResponseEntity createSample(@RequestBody SampleDTO sampleDTO) {
+    public ResponseEntity<Void> createSample(@RequestBody SampleDTO sampleDTO) {
         SampleDTO savedSampleDTO = sampleService.saveNewSample(sampleDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/api/v1/sample/" + savedSampleDTO.getId().toString());
-        return new ResponseEntity(headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
     @PutMapping(SAMPLE_PATH_ID)
-    public ResponseEntity updateSampleById(@PathVariable("sampleId") UUID sampleId, @RequestBody SampleDTO sampleDTO) {
-        sampleService.updateSampleById(sampleId, sampleDTO);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Void> updateSampleById(@PathVariable("sampleId") UUID sampleId, @RequestBody SampleDTO sampleDTO) {
+        sampleService.updateSampleById(sampleId, sampleDTO).orElseThrow(NotFoundException::new);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping(SAMPLE_PATH_ID)
-    public ResponseEntity deleteById(@PathVariable("sampleId") UUID sampleId) {
-        sampleService.deleteById(sampleId);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Void> deleteById(@PathVariable("sampleId") UUID sampleId) {
+        if (!sampleService.deleteById(sampleId))
+            throw new NotFoundException();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping(SAMPLE_PATH_ID)
-    public ResponseEntity patchSampleById(@PathVariable("sampleId") UUID sampleId, @RequestBody SampleDTO sampleDTO) {
+    public ResponseEntity<Void> patchSampleById(@PathVariable("sampleId") UUID sampleId, @RequestBody SampleDTO sampleDTO) {
         sampleService.patchSampleById(sampleId, sampleDTO);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }

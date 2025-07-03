@@ -36,9 +36,9 @@ class SampleControllerIT {
 
     @Test
     void testListSamples() {
-        List<SampleDTO> dtos = sampleController.listSamples();
+        List<SampleDTO> sampleDtos = sampleController.listSamples();
 
-        assertThat(dtos.size()).isEqualTo(3);
+        assertThat(sampleDtos.size()).isEqualTo(3);
     }
 
     @Rollback
@@ -46,18 +46,18 @@ class SampleControllerIT {
     @Test
     void testEmptyList() {
         sampleRepository.deleteAll();
-        List<SampleDTO> dtos = sampleController.listSamples();
+        List<SampleDTO> sampleDtos = sampleController.listSamples();
 
-        assertThat(dtos.size()).isEqualTo(0);
+        assertThat(sampleDtos.size()).isEqualTo(0);
     }
 
     @Test
     void testGetSampleById() {
         var sample = sampleRepository.findAll().getFirst();
-        var dto = sampleController.getSampleById(sample.getId());
+        var sampleDto = sampleController.getSampleById(sample.getId());
 
-        assertThat(dto).isNotNull();
-        assertThat(dto.getId()).isEqualTo(sample.getId());
+        assertThat(sampleDto).isNotNull();
+        assertThat(sampleDto.getId()).isEqualTo(sample.getId());
     }
 
     @Test
@@ -69,13 +69,13 @@ class SampleControllerIT {
     @Transactional
     @Test
     void testSaveNewSample() {
-        SampleDTO dto = SampleDTO.builder()
+        SampleDTO sampleDto = SampleDTO.builder()
                 .sampleCode("202A")
                 .status(SampleStatus.PROCESSING)
                 .type(SampleType.BLOOD_TEST)
             .build();
 
-        var responseEntity = sampleController.createSample(dto);
+        var responseEntity = sampleController.createSample(sampleDto);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(201));
         assertThat(responseEntity.getHeaders().getLocation()).isNotNull();
 
@@ -102,5 +102,29 @@ class SampleControllerIT {
 
         var savedSample = sampleRepository.findById(sample.getId()).get();
         assertThat(savedSample.getSampleCode()).isEqualTo("832F");
+    }
+
+    @Test
+    void testUpdateSampleByIdNotFound() {
+        assertThrows(NotFoundException.class, () -> {
+            sampleController.updateSampleById(UUID.randomUUID(),
+                    SampleDTO.builder().build());
+        });
+    }
+
+    @Rollback
+    @Transactional
+    @Test
+    void testDeleteSampleById() {
+        var sample = sampleRepository.findAll().getFirst();
+        var responseEntity = sampleController.deleteById(sample.getId());
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+        assertThat(sampleRepository.findById(sample.getId())).isEmpty();
+    }
+
+    @Test
+    void testDeleteSampleByIdNotFound() {
+        assertThrows(NotFoundException.class, () -> sampleController.deleteById(UUID.randomUUID()));
     }
 }

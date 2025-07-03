@@ -58,8 +58,12 @@ public class SampleServiceJPA implements SampleService {
     }
 
     @Override
-    public void deleteById(UUID sampleId) {
-
+    public Boolean deleteById(UUID sampleId) {
+        if (!sampleRepository.existsById(sampleId)) {
+            return false;
+        }
+        sampleRepository.deleteById(sampleId);
+        return true;
     }
 
     @Override

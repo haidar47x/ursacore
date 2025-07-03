@@ -85,15 +85,20 @@ public class SampleServiceImpl implements SampleService {
     @Override
     public Optional<SampleDTO> updateSampleById(UUID sampleId, SampleDTO sampleDTO) {
         SampleDTO existing = sampleMap.get(sampleId);
+        if (existing == null) {
+            return Optional.empty();
+        }
         existing.setUpdateAt(LocalDateTime.now());
         existing.setStatus(sampleDTO.getStatus());
         existing.setType(sampleDTO.getType());
         existing.setSampleCode(sampleDTO.getSampleCode());
+        return Optional.of(existing);
     }
 
     @Override
-    public void deleteById(UUID sampleId) {
+    public Boolean deleteById(UUID sampleId) {
         sampleMap.remove(sampleId);
+        return true;
     }
 
     @Override

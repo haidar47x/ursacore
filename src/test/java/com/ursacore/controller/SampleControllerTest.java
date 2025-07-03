@@ -97,6 +97,9 @@ class SampleControllerTest {
     void testUpdateSample() throws Exception {
         SampleDTO sampleDTO = sampleServiceImpl.listSamples().getFirst();
 
+        given(sampleService.updateSampleById(any(UUID.class), any(SampleDTO.class)))
+                .willReturn(Optional.of(sampleDTO));
+
         mockMvc.perform(put(SampleController.SAMPLE_PATH_ID, sampleDTO.getId())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -108,8 +111,22 @@ class SampleControllerTest {
     }
 
     @Test
+    void testUpdateSampleNotFound() throws Exception {
+        given(sampleService.updateSampleById(any(UUID.class), any(SampleDTO.class)))
+                .willReturn(Optional.empty());
+
+        mockMvc.perform(put(SampleController.SAMPLE_PATH_ID, UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(SampleDTO.builder().build())))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void testDeleteSample() throws Exception {
         SampleDTO sampleDTO = sampleServiceImpl.listSamples().getFirst();
+
+        given(sampleService.deleteById(any(UUID.class))).willReturn(true);
 
         mockMvc.perform(delete(SampleController.SAMPLE_PATH_ID, sampleDTO.getId())
                         .accept(MediaType.APPLICATION_JSON))
