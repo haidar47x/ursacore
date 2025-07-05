@@ -34,22 +34,22 @@ public class PatientController {
     }
 
     @PostMapping(PATIENT_PATH)
-    public ResponseEntity createNewPatient(@RequestBody PatientDTO patientDTO) {
-        PatientDTO savedPatientDTO = patientService.createNewPatient(patientDTO);
+    public ResponseEntity<Void> createNewPatient(@RequestBody PatientDTO patientDTO) {
+        PatientDTO savedPatientDTO = patientService.saveNewPatient(patientDTO);
         HttpHeaders headers = new HttpHeaders();
-        var id = savedPatientDTO.getId();
         headers.add("Location", "/api/v1/patient/" + savedPatientDTO.getId().toString());
-        return new ResponseEntity(headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
     @PutMapping(PATIENT_PATH_ID)
-    public ResponseEntity updatePatientById(@PathVariable("patientId") UUID patientId, @RequestBody PatientDTO patientDTO) {
-        patientService.updatePatientById(patientId, patientDTO);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Void> updatePatientById(@PathVariable("patientId") UUID patientId, @RequestBody PatientDTO patientDTO) {
+        patientService.updatePatientById(patientId, patientDTO)
+                .orElseThrow(NotFoundException::new);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping(PATIENT_PATH_ID)
-    public ResponseEntity deleteById(@PathVariable("patientId") UUID patientId) {
+    public ResponseEntity<Void> deleteById(@PathVariable("patientId") UUID patientId) {
         patientService.deleteById(patientId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

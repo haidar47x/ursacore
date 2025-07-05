@@ -35,7 +35,7 @@ public class SampleController {
     }
 
     @PostMapping(SAMPLE_PATH)
-    public ResponseEntity<Void> createSample(@RequestBody SampleDTO sampleDTO) {
+    public ResponseEntity<Void> createNewSample(@RequestBody SampleDTO sampleDTO) {
         SampleDTO savedSampleDTO = sampleService.saveNewSample(sampleDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/api/v1/sample/" + savedSampleDTO.getId().toString());

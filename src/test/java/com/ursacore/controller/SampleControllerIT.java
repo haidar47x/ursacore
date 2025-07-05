@@ -44,7 +44,7 @@ class SampleControllerIT {
     @Rollback
     @Transactional
     @Test
-    void testEmptyList() {
+    void testListSamplesEmpty() {
         sampleRepository.deleteAll();
         List<SampleDTO> sampleDtos = sampleController.listSamples();
 
@@ -68,21 +68,23 @@ class SampleControllerIT {
     @Rollback
     @Transactional
     @Test
-    void testSaveNewSample() {
-        SampleDTO sampleDto = SampleDTO.builder()
-                .sampleCode("202A")
+    void testCreateNewSample() {
+        var sampleDtoCode = "202A";
+        var sampleDto = SampleDTO.builder()
+                .sampleCode(sampleDtoCode)
                 .status(SampleStatus.PROCESSING)
                 .type(SampleType.BLOOD_TEST)
             .build();
 
-        var responseEntity = sampleController.createSample(sampleDto);
+        var responseEntity = sampleController.createNewSample(sampleDto);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(201));
         assertThat(responseEntity.getHeaders().getLocation()).isNotNull();
 
         var savedUri = responseEntity.getHeaders().getLocation().getPath();
         var savedUuid = UUID.fromString(savedUri.split("/")[4]);
-        var savedSample = sampleRepository.findById(savedUuid);
-        assertThat(savedSample).isNotNull();
+        var sample = sampleRepository.findById(savedUuid).get();
+        assertThat(sample).isNotNull();
+        assertThat(sample.getSampleCode()).isEqualTo(sampleDtoCode);
     }
 
     @Rollback
@@ -91,17 +93,16 @@ class SampleControllerIT {
     void testUpdateSampleById() {
         var sample = sampleRepository.findAll().getFirst();
         var sampleDto = sampleMapper.sampleToSampleDto(sample);
+        final var sampleDtoCode = "832F";
         sampleDto.setId(null);
         sampleDto.setVersion(null);
-
-        final String sampleDtoCode = "832F";
         sampleDto.setSampleCode(sampleDtoCode);
 
         var responseEntity = sampleController.updateSampleById(sample.getId(), sampleDto);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
 
         var savedSample = sampleRepository.findById(sample.getId()).get();
-        assertThat(savedSample.getSampleCode()).isEqualTo("832F");
+        assertThat(savedSample.getSampleCode()).isEqualTo(sampleDtoCode);
     }
 
     @Test

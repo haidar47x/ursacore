@@ -1,5 +1,6 @@
 package com.ursacore.service;
 
+import com.ursacore.entity.Patient;
 import com.ursacore.mapper.PatientMapper;
 import com.ursacore.model.PatientDTO;
 import com.ursacore.repository.PatientRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Primary
@@ -36,13 +38,25 @@ public class PatientServiceJPA implements PatientService {
     }
 
     @Override
-    public PatientDTO createNewPatient(PatientDTO patientDTO) {
-        return null;
+    public PatientDTO saveNewPatient(PatientDTO patientDto) {
+        Patient savedPatient = patientRepository.save(
+                patientMapper.patientDtoToPatient(patientDto));
+        return patientMapper.patientToPatientDto(savedPatient);
     }
 
     @Override
-    public void updatePatientById(UUID patientId, PatientDTO patientDTO) {
+    public Optional<PatientDTO> updatePatientById(UUID patientId, PatientDTO patientDto) {
+        AtomicReference<Optional<PatientDTO>> atomicReference = new AtomicReference<>();
+        patientRepository.findById(patientId).ifPresentOrElse(foundPatient -> {
+            foundPatient.setName(patientDto.getName());
+            Patient savedPatient = patientRepository.save(foundPatient);
+            atomicReference.set(Optional.of(
+                    patientMapper.patientToPatientDto(savedPatient)));
+        }, () -> {
+            atomicReference.set(Optional.empty());
+        });
 
+        return atomicReference.get();
     }
 
     @Override

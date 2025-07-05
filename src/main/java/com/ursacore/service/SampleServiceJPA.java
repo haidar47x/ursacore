@@ -1,5 +1,6 @@
 package com.ursacore.service;
 
+import com.ursacore.entity.Sample;
 import com.ursacore.mapper.SampleMapper;
 import com.ursacore.model.SampleDTO;
 import com.ursacore.repository.SampleRepository;
@@ -38,7 +39,8 @@ public class SampleServiceJPA implements SampleService {
 
     @Override
     public SampleDTO saveNewSample(SampleDTO sampleDTO) {
-        return sampleMapper.sampleToSampleDto(sampleRepository.save(sampleMapper.sampleDtoToSample(sampleDTO)));
+        Sample sample = sampleRepository.save(sampleMapper.sampleDtoToSample(sampleDTO));
+        return sampleMapper.sampleToSampleDto(sample);
     }
 
     @Override
@@ -50,7 +52,7 @@ public class SampleServiceJPA implements SampleService {
             foundSample.setStatus(sampleDTO.getStatus());
             foundSample.setType(sampleDTO.getType());
             foundSample.setCollectedAt(sampleDTO.getCollectedAt());
-            var savedSample = sampleRepository.save(foundSample);
+            Sample savedSample = sampleRepository.save(foundSample);
             atomicReference.set(Optional.of(sampleMapper.sampleToSampleDto(savedSample)));
         }, () -> atomicReference.set(Optional.empty()));
 

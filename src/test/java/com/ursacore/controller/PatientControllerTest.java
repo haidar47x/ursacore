@@ -82,7 +82,7 @@ class PatientControllerTest {
         PatientDTO patientDTO = patientServiceImpl.listPatients().getFirst();
         patientDTO.setVersion(null);
         patientDTO.setId(null);
-        given(patientService.createNewPatient(any(PatientDTO.class))).willReturn(patientServiceImpl.listPatients().get(1));
+        given(patientService.saveNewPatient(any(PatientDTO.class))).willReturn(patientServiceImpl.listPatients().get(1));
 
         mockMvc.perform(post(PatientController.PATIENT_PATH)
                         .accept(MediaType.APPLICATION_JSON)

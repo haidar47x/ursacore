@@ -56,7 +56,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public PatientDTO createNewPatient(PatientDTO patientDTO) {
+    public PatientDTO saveNewPatient(PatientDTO patientDTO) {
         PatientDTO savedPatientDTO = PatientDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
@@ -70,10 +70,14 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void updatePatientById(UUID patientId, PatientDTO patientDTO) {
+    public Optional<PatientDTO> updatePatientById(UUID patientId, PatientDTO patientDTO) {
         PatientDTO existing = patientMap.get(patientId);
+        if (existing == null) {
+            return Optional.empty();
+        }
         existing.setName(patientDTO.getName());
         existing.setUpdateAt(LocalDateTime.now());
+        return Optional.of(existing);
     }
 
     @Override

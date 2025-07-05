@@ -12,9 +12,9 @@ public interface PatientService {
 
     Optional<PatientDTO> getPatientById(UUID patientId);
 
-    PatientDTO createNewPatient(PatientDTO patientDTO);
+    PatientDTO saveNewPatient(PatientDTO patientDTO);
 
-    void updatePatientById(UUID patientId, PatientDTO patientDTO);
+    Optional<PatientDTO> updatePatientById(UUID patientId, PatientDTO patientDTO);
 
     void deleteById(UUID patientId);
 
