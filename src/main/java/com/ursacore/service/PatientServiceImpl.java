@@ -2,7 +2,6 @@ package com.ursacore.service;
 
 import com.ursacore.model.PatientDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -81,16 +80,19 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void deleteById(UUID patientId) {
+    public Boolean deletePatientById(UUID patientId) {
         patientMap.remove(patientId);
+        return true;
     }
 
     @Override
-    public void patchPatientById(UUID patientId, PatientDTO patientDTO) {
+    public Optional<PatientDTO> patchPatientById(UUID patientId, PatientDTO patientDTO) {
         PatientDTO existing = patientMap.get(patientId);
 
-        if (patientDTO.getName() != null) {
-            existing.setName(patientDTO.getName());
-        }
+        if (existing == null)
+            return Optional.empty();
+
+        existing.setName(patientDTO.getName());
+        return Optional.of(patientDTO);
     }
 }

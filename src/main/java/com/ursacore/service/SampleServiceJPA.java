@@ -60,7 +60,7 @@ public class SampleServiceJPA implements SampleService {
     }
 
     @Override
-    public Boolean deleteById(UUID sampleId) {
+    public Boolean deleteSampleById(UUID sampleId) {
         if (!sampleRepository.existsById(sampleId)) {
             return false;
         }
@@ -69,7 +69,25 @@ public class SampleServiceJPA implements SampleService {
     }
 
     @Override
-    public void patchSampleById(UUID sampleId, SampleDTO sampleDTO) {
+    public Optional<SampleDTO> patchSampleById(UUID sampleId, SampleDTO sampleDTO) {
+        if (!sampleRepository.existsById(sampleId))
+            return Optional.empty();
 
+        Sample existing = sampleRepository.findById(sampleId).get();
+
+        if (sampleDTO.getSampleCode() != null) {
+            existing.setSampleCode(sampleDTO.getSampleCode());
+        }
+
+        if (sampleDTO.getStatus() != null) {
+            existing.setStatus(sampleDTO.getStatus());
+        }
+
+        if (sampleDTO.getType() != null) {
+            existing.setType(sampleDTO.getType());
+        }
+
+        SampleDTO savedSample = sampleMapper.sampleToSampleDto(sampleRepository.save(existing));
+        return Optional.of(savedSample);
     }
 }

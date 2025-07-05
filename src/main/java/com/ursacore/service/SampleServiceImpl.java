@@ -96,14 +96,19 @@ public class SampleServiceImpl implements SampleService {
     }
 
     @Override
-    public Boolean deleteById(UUID sampleId) {
+    public Boolean deleteSampleById(UUID sampleId) {
         sampleMap.remove(sampleId);
         return true;
     }
 
     @Override
-    public void patchSampleById(UUID sampleId, SampleDTO sampleDTO) {
+    public Optional<SampleDTO> patchSampleById(UUID sampleId, SampleDTO sampleDTO) {
         SampleDTO existing = sampleMap.get(sampleId);
+
+        if (existing == null) {
+            return Optional.empty();
+        }
+
         if (sampleDTO.getSampleCode() != null) {
             existing.setSampleCode(sampleDTO.getSampleCode());
         }
@@ -115,5 +120,7 @@ public class SampleServiceImpl implements SampleService {
         if (sampleDTO.getType() != null) {
             existing.setType(sampleDTO.getType());
         }
+
+        return Optional.of(sampleDTO);
     }
 }

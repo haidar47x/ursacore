@@ -34,7 +34,7 @@ public class PatientController {
     }
 
     @PostMapping(PATIENT_PATH)
-    public ResponseEntity<Void> createNewPatient(@RequestBody PatientDTO patientDTO) {
+    public ResponseEntity<Void> createPatient(@RequestBody PatientDTO patientDTO) {
         PatientDTO savedPatientDTO = patientService.saveNewPatient(patientDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/api/v1/patient/" + savedPatientDTO.getId().toString());
@@ -49,14 +49,15 @@ public class PatientController {
     }
 
     @DeleteMapping(PATIENT_PATH_ID)
-    public ResponseEntity<Void> deleteById(@PathVariable("patientId") UUID patientId) {
-        patientService.deleteById(patientId);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Void> deletePatientById(@PathVariable("patientId") UUID patientId) {
+        if (!patientService.deletePatientById(patientId))
+            throw new NotFoundException();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping(PATIENT_PATH_ID)
-    public ResponseEntity deleteById(@PathVariable("patientId") UUID patientId, @RequestBody PatientDTO patientDTO) {
-        patientService.patchPatientById(patientId, patientDTO);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Void> patchPatientById(@PathVariable("patientId") UUID patientId, @RequestBody PatientDTO patientDTO) {
+        patientService.patchPatientById(patientId, patientDTO).orElseThrow(NotFoundException::new);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -1,6 +1,5 @@
 package com.ursacore.controller;
 
-import com.ursacore.entity.Sample;
 import com.ursacore.exception.NotFoundException;
 import com.ursacore.mapper.SampleMapper;
 import com.ursacore.model.SampleDTO;
@@ -11,9 +10,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
@@ -76,7 +73,7 @@ class SampleControllerIT {
                 .type(SampleType.BLOOD_TEST)
             .build();
 
-        var responseEntity = sampleController.createNewSample(sampleDto);
+        var responseEntity = sampleController.createSample(sampleDto);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(201));
         assertThat(responseEntity.getHeaders().getLocation()).isNotNull();
 
@@ -118,7 +115,7 @@ class SampleControllerIT {
     @Test
     void testDeleteSampleById() {
         var sample = sampleRepository.findAll().getFirst();
-        var responseEntity = sampleController.deleteById(sample.getId());
+        var responseEntity = sampleController.deleteSampleById(sample.getId());
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
         assertThat(sampleRepository.findById(sample.getId())).isEmpty();
@@ -126,6 +123,28 @@ class SampleControllerIT {
 
     @Test
     void testDeleteSampleByIdNotFound() {
-        assertThrows(NotFoundException.class, () -> sampleController.deleteById(UUID.randomUUID()));
+        assertThrows(NotFoundException.class, () -> sampleController.deleteSampleById(UUID.randomUUID()));
+    }
+
+    @Rollback
+    @Transactional
+    @Test
+    void testPatchSampleById() {
+        var sample = sampleRepository.findAll().getFirst();
+        var sampleDto = sampleMapper.sampleToSampleDto(sample);
+        final var sampleDtoCode = "TEST";
+        sampleDto.setSampleCode(sampleDtoCode);
+
+        var responseEntity = sampleController.patchSampleById(sampleDto.getId(), sampleDto);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+
+        var patchedSample = sampleRepository.findById(sample.getId()).get();
+        assertThat(patchedSample).isNotNull();
+        assertThat(patchedSample.getSampleCode()).isEqualTo(sampleDtoCode);
+    }
+
+    @Test
+    void testPatchSampleByIdNotFound() {
+        assertThrows(NotFoundException.class, () -> sampleController.patchSampleById(UUID.randomUUID(), SampleDTO.builder().build()));
     }
 }

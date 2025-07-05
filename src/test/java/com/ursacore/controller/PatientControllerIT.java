@@ -68,7 +68,7 @@ class PatientControllerIT {
         var patientDto = PatientDTO.builder()
                 .name(patientName)
                 .build();
-        var responseEntity = patientController.createNewPatient(patientDto);
+        var responseEntity = patientController.createPatient(patientDto);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(201));
         assertThat(responseEntity.getHeaders().getLocation()).isNotNull();
@@ -109,6 +109,37 @@ class PatientControllerIT {
     @Transactional
     @Test
     void testDeletePatientById() {
+        var patient = patientRepository.findAll().getFirst();
+        var responseEntity = patientController.deletePatientById(patient.getId());
 
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+        assertThat(patientRepository.findById(patient.getId())).isEmpty();
+    }
+
+    @Test
+    void testDeletePatientByIdNotFound() {
+        assertThrows(NotFoundException.class, () -> patientController.deletePatientById(UUID.randomUUID()));
+    }
+
+    @Rollback
+    @Transactional
+    @Test
+    void testPatchPatientById() {
+        var patient = patientRepository.findAll().getFirst();
+        var patientDto = patientMapper.patientToPatientDto(patient);
+        final var patientName = "Doe John";
+        patientDto.setName(patientName);
+
+        var responseEntity = patientController.patchPatientById(patient.getId(), patientDto);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+
+        var patchedPatient = patientRepository.findById(patient.getId()).get();
+        assertThat(patchedPatient).isNotNull();
+        assertThat(patchedPatient.getName()).isEqualTo(patientName);
+    }
+
+    @Test
+    void testPatchPatientByIdNotFound() {
+        assertThrows(NotFoundException.class, () -> patientController.patchPatientById(UUID.randomUUID(), PatientDTO.builder().build()));
     }
 }

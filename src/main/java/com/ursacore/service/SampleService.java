@@ -16,7 +16,7 @@ public interface SampleService {
 
     Optional<SampleDTO> updateSampleById(UUID sampleId, SampleDTO sampleDTO);
 
-    Boolean deleteById(UUID sampleId);
+    Boolean deleteSampleById(UUID sampleId);
 
-    void patchSampleById(UUID sampleId, SampleDTO sampleDTO);
+    Optional<SampleDTO> patchSampleById(UUID sampleId, SampleDTO sampleDTO);
 }

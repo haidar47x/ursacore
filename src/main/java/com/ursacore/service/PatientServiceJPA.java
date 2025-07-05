@@ -60,12 +60,25 @@ public class PatientServiceJPA implements PatientService {
     }
 
     @Override
-    public void deleteById(UUID patientId) {
-
+    public Boolean deletePatientById(UUID patientId) {
+        if (!patientRepository.existsById(patientId)) {
+            return false;
+        }
+        patientRepository.deleteById(patientId);
+        return true;
     }
 
     @Override
-    public void patchPatientById(UUID patientId, PatientDTO patientDTO) {
+    public Optional<PatientDTO> patchPatientById(UUID patientId, PatientDTO patientDTO) {
+        if (!patientRepository.existsById(patientId))
+            return Optional.empty();
 
+        Patient existing = patientRepository.findById(patientId).get();
+        if (patientDTO.getName() != null) {
+            existing.setName(patientDTO.getName());
+        }
+
+        PatientDTO saved = patientMapper.patientToPatientDto(patientRepository.save(existing));
+        return Optional.of(saved);
     }
 }

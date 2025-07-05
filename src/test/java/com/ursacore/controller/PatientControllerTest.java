@@ -1,9 +1,13 @@
 package com.ursacore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ursacore.entity.Patient;
+import com.ursacore.mapper.PatientMapper;
 import com.ursacore.model.PatientDTO;
+import com.ursacore.repository.PatientRepository;
 import com.ursacore.service.PatientService;
 import com.ursacore.service.PatientServiceImpl;
+import com.ursacore.service.PatientServiceJPA;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -14,10 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -46,16 +47,15 @@ class PatientControllerTest {
     @Captor
     ArgumentCaptor<UUID> uuidArgumentCaptor;
 
-    PatientServiceImpl patientServiceImpl;
-
-    @BeforeEach
-    void setUp() {
-        patientServiceImpl = new PatientServiceImpl();
-    }
-
     @Test
-    void listPatients() throws Exception {
-        given(patientService.listPatients()).willReturn(patientServiceImpl.listPatients());
+    void testListPatients() throws Exception {
+        var patientList = List.of(
+                PatientDTO.builder().name("A").build(),
+                PatientDTO.builder().name("B").build(),
+                PatientDTO.builder().name("C").build()
+        );
+
+        given(patientService.listPatients()).willReturn(patientList);
 
         mockMvc.perform(get(PatientController.PATIENT_PATH)
                         .accept(MediaType.APPLICATION_JSON))
@@ -65,24 +65,30 @@ class PatientControllerTest {
     }
 
     @Test
-    void getPatientById() throws Exception {
-        PatientDTO testPatientDTO = patientServiceImpl.listPatients().getFirst();
-        given(patientService.getPatientById(testPatientDTO.getId())).willReturn(Optional.of(testPatientDTO));
+    void getGetPatientById() throws Exception {
+        var patientDto = PatientDTO.builder().id(UUID.randomUUID()).name("John Doe").build();
+        given(patientService.getPatientById(patientDto.getId())).willReturn(Optional.of(patientDto));
 
-        mockMvc.perform(get(PatientController.PATIENT_PATH_ID, testPatientDTO.getId())
+        mockMvc.perform(get(PatientController.PATIENT_PATH_ID, patientDto.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(testPatientDTO.getId().toString())))
-                .andExpect(jsonPath("$.name", is(testPatientDTO.getName())));
+                .andExpect(jsonPath("$.id", is(patientDto.getId().toString())))
+                .andExpect(jsonPath("$.name", is(patientDto.getName())));
+    }
+
+    @Test
+    void testGetPatientByIdNotFound() throws Exception {
+        given(patientService.getPatientById(any(UUID.class))).willReturn(Optional.empty());
+
+        mockMvc.perform(get(PatientController.PATIENT_PATH_ID, UUID.randomUUID()))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void testCreateNewPatient() throws Exception {
-        PatientDTO patientDTO = patientServiceImpl.listPatients().getFirst();
-        patientDTO.setVersion(null);
-        patientDTO.setId(null);
-        given(patientService.saveNewPatient(any(PatientDTO.class))).willReturn(patientServiceImpl.listPatients().get(1));
+        var patientDTO = PatientDTO.builder().id(UUID.randomUUID()).build();
+        given(patientService.saveNewPatient(patientDTO)).willReturn(patientDTO);
 
         mockMvc.perform(post(PatientController.PATIENT_PATH)
                         .accept(MediaType.APPLICATION_JSON)
@@ -93,35 +99,48 @@ class PatientControllerTest {
     }
 
     @Test
-    void testUpdatePatient() throws Exception {
-        PatientDTO patientDTO = patientServiceImpl.listPatients().getFirst();
+    void testUpdatePatientById() throws Exception {
+        var patientDto = PatientDTO.builder().id(UUID.randomUUID()).name("John Doe").build();
+        
+        given(patientService.updatePatientById(any(UUID.class), any(PatientDTO.class))).willReturn(Optional.of(patientDto));
 
-        mockMvc.perform(put(PatientController.PATIENT_PATH_ID, patientDTO.getId())
+        mockMvc.perform(put(PatientController.PATIENT_PATH_ID, patientDto.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(patientDTO)))
+                        .content(objectMapper.writeValueAsString(patientDto)))
                 .andExpect(status().isNoContent());
 
-        verify(patientService).updatePatientById(eq(patientDTO.getId()), any(PatientDTO.class));
+        verify(patientService).updatePatientById(eq(patientDto.getId()), any(PatientDTO.class));
     }
 
     @Test
-    void testDeletePatient() throws Exception {
-        PatientDTO patientDTO = patientServiceImpl.listPatients().getFirst();
+    void testDeletePatientById() throws Exception {
+        var patientDTO = PatientDTO.builder().id(UUID.randomUUID()).build();
+
+        given(patientService.deletePatientById(any(UUID.class))).willReturn(true);
 
         mockMvc.perform(delete(PatientController.PATIENT_PATH_ID, patientDTO.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        verify(patientService).deleteById(uuidArgumentCaptor.capture());
+        verify(patientService).deletePatientById(uuidArgumentCaptor.capture());
         assertThat(patientDTO.getId()).isEqualTo(uuidArgumentCaptor.getValue());
     }
 
     @Test
-    void testPatchPatient() throws Exception {
-        PatientDTO patientDTO = patientServiceImpl.listPatients().getFirst();
-        Map<String, Object> patientMap = new HashMap<>();
-        patientMap.put("name", "Joey Doe");
+    void testDeletePatientByIdNotFound() throws Exception {
+        given(patientService.deletePatientById(any(UUID.class))).willReturn(false);
+
+        mockMvc.perform(delete(PatientController.PATIENT_PATH_ID, UUID.randomUUID())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testPatchPatientById() throws Exception {
+        PatientDTO patientDTO = PatientDTO.builder().id(UUID.randomUUID()).name("John Doe").build();
+
+        given(patientService.patchPatientById(any(UUID.class), any(PatientDTO.class))).willReturn(Optional.of(patientDTO));
 
         mockMvc.perform(patch(PatientController.PATIENT_PATH_ID, patientDTO.getId())
                         .accept(MediaType.APPLICATION_JSON)
@@ -135,10 +154,13 @@ class PatientControllerTest {
     }
 
     @Test
-    void testGetPatientByIdNotFound() throws Exception {
-        given(patientService.getPatientById(any(UUID.class))).willReturn(Optional.empty());
+    void testPatchPatientByIdNotFound() throws Exception {
+        given(patientService.patchPatientById(any(UUID.class), any(PatientDTO.class))).willReturn(Optional.empty());
 
-        mockMvc.perform(get(PatientController.PATIENT_PATH_ID, UUID.randomUUID()))
+        mockMvc.perform(patch(PatientController.PATIENT_PATH_ID, UUID.randomUUID())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(PatientDTO.builder().build())))
                 .andExpect(status().isNotFound());
     }
 }

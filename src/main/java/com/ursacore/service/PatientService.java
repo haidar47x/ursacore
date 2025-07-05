@@ -16,7 +16,7 @@ public interface PatientService {
 
     Optional<PatientDTO> updatePatientById(UUID patientId, PatientDTO patientDTO);
 
-    void deleteById(UUID patientId);
+    Boolean deletePatientById(UUID patientId);
 
-    void patchPatientById(UUID patientId, PatientDTO patientDTO);
+    Optional<PatientDTO> patchPatientById(UUID patientId, PatientDTO patientDTO);
 }

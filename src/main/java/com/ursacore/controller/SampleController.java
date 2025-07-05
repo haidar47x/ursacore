@@ -35,7 +35,7 @@ public class SampleController {
     }
 
     @PostMapping(SAMPLE_PATH)
-    public ResponseEntity<Void> createNewSample(@RequestBody SampleDTO sampleDTO) {
+    public ResponseEntity<Void> createSample(@RequestBody SampleDTO sampleDTO) {
         SampleDTO savedSampleDTO = sampleService.saveNewSample(sampleDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/api/v1/sample/" + savedSampleDTO.getId().toString());
@@ -49,15 +49,15 @@ public class SampleController {
     }
 
     @DeleteMapping(SAMPLE_PATH_ID)
-    public ResponseEntity<Void> deleteById(@PathVariable("sampleId") UUID sampleId) {
-        if (!sampleService.deleteById(sampleId))
+    public ResponseEntity<Void> deleteSampleById(@PathVariable("sampleId") UUID sampleId) {
+        if (!sampleService.deleteSampleById(sampleId))
             throw new NotFoundException();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping(SAMPLE_PATH_ID)
     public ResponseEntity<Void> patchSampleById(@PathVariable("sampleId") UUID sampleId, @RequestBody SampleDTO sampleDTO) {
-        sampleService.patchSampleById(sampleId, sampleDTO);
+        sampleService.patchSampleById(sampleId, sampleDTO).orElseThrow(NotFoundException::new);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
