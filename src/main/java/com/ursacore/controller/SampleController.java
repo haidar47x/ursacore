@@ -44,7 +44,7 @@ public class SampleController {
     }
 
     @PutMapping(SAMPLE_PATH_ID)
-    public ResponseEntity<Void> updateSampleById(@PathVariable("sampleId") UUID sampleId, @RequestBody SampleDTO sampleDTO) {
+    public ResponseEntity<Void> updateSampleById(@PathVariable("sampleId") UUID sampleId, @Validated @RequestBody SampleDTO sampleDTO) {
         sampleService.updateSampleById(sampleId, sampleDTO).orElseThrow(NotFoundException::new);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

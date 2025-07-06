@@ -3,11 +3,13 @@ package com.ursacore.controller;
 import com.ursacore.exception.NotFoundException;
 import com.ursacore.model.PatientDTO;
 import com.ursacore.service.PatientService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +36,7 @@ public class PatientController {
     }
 
     @PostMapping(PATIENT_PATH)
-    public ResponseEntity<Void> createPatient(@RequestBody PatientDTO patientDTO) {
+    public ResponseEntity<Void> createPatient(@Validated @RequestBody PatientDTO patientDTO) {
         PatientDTO savedPatientDTO = patientService.saveNewPatient(patientDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/api/v1/patient/" + savedPatientDTO.getId().toString());
@@ -42,7 +44,7 @@ public class PatientController {
     }
 
     @PutMapping(PATIENT_PATH_ID)
-    public ResponseEntity<Void> updatePatientById(@PathVariable("patientId") UUID patientId, @RequestBody PatientDTO patientDTO) {
+    public ResponseEntity<Void> updatePatientById(@PathVariable("patientId") UUID patientId, @Validated @RequestBody PatientDTO patientDTO) {
         patientService.updatePatientById(patientId, patientDTO)
                 .orElseThrow(NotFoundException::new);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

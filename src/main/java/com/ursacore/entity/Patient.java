@@ -1,6 +1,9 @@
 package com.ursacore.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -23,6 +26,13 @@ public class Patient {
 
     @Version
     private Integer version;
+
+    // We have both Size and Column length constraints on the value so that
+    // we validate the value prior to hitting the database.
+    @NotBlank
+    @NotNull
+    @Size(max = 128)
+    @Column(length = 128)
     private String name;
 
     private LocalDateTime createdAt;

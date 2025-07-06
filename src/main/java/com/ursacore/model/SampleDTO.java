@@ -23,8 +23,14 @@ public class SampleDTO {
     @NotBlank
     @NotNull
     private String sampleCode;
+
+    @NotNull
     private SampleType type;
+
+    @NotNull
     private SampleStatus status;
+
+    @NotNull
     private LocalDateTime collectedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updateAt;

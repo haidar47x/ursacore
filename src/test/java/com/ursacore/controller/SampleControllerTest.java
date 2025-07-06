@@ -1,8 +1,11 @@
 package com.ursacore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ursacore.entity.Sample;
 import com.ursacore.mapper.SampleMapper;
 import com.ursacore.model.SampleDTO;
+import com.ursacore.model.SampleStatus;
+import com.ursacore.model.SampleType;
 import com.ursacore.repository.SampleRepository;
 import com.ursacore.service.SampleService;
 import com.ursacore.service.SampleServiceJPA;
@@ -16,6 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -64,7 +69,7 @@ class SampleControllerTest {
 
     @Test
     void testGetSampleById() throws Exception {
-        SampleDTO sampleDto = SampleDTO.builder().id(UUID.randomUUID()).sampleCode("182F").build();
+        var sampleDto = SampleDTO.builder().id(UUID.randomUUID()).sampleCode("182F").build();
         given(sampleService.getSampleById(sampleDto.getId())).willReturn(Optional.of(sampleDto));
 
         mockMvc.perform(get(SampleController.SAMPLE_PATH_ID, sampleDto.getId().toString())
@@ -86,8 +91,11 @@ class SampleControllerTest {
     @Test
     void testCreateNewSample() throws Exception {
         var sampleDto = SampleDTO.builder()
-                .sampleCode("1890")
                 .id(UUID.randomUUID())
+                .sampleCode("1890")
+                .type(SampleType.BLOOD_TEST)
+                .status(SampleStatus.PROCESSING)
+                .collectedAt(LocalDateTime.now())
             .build();
         given(sampleService.saveNewSample(any(SampleDTO.class))).willReturn(sampleDto);
 
@@ -100,7 +108,7 @@ class SampleControllerTest {
     }
 
     @Test
-    void testCreateNewSampleNullSampleCode() throws Exception {
+    void testCreateNewSampleValidation() throws Exception {
         var sampleDto = SampleDTO.builder().id(UUID.randomUUID()).build();
         given(sampleService.saveNewSample(any(SampleDTO.class))).willReturn(sampleDto);
 
@@ -108,12 +116,19 @@ class SampleControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(sampleDto)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.length()", is(5)));
     }
 
     @Test
     void testUpdateSampleById() throws Exception {
-        SampleDTO sampleDTO = SampleDTO.builder().id(UUID.randomUUID()).sampleCode("2722").build();
+        var sampleDTO = SampleDTO.builder()
+                .id(UUID.randomUUID())
+                .sampleCode("2722")
+                .status(SampleStatus.PROCESSING)
+                .type(SampleType.BLOOD_TEST)
+                .collectedAt(LocalDateTime.now())
+            .build();
 
         given(sampleService.updateSampleById(eq(sampleDTO.getId()), any(SampleDTO.class)))
                 .willReturn(Optional.of(sampleDTO));
@@ -124,19 +139,46 @@ class SampleControllerTest {
                         .content(objectMapper.writeValueAsString(sampleDTO)))
                 .andExpect(status().isNoContent());
 
-        /* Verify updateSampleById was called with the given ID */
+        // Verify updateSampleById was called with the given ID.
         verify(sampleService).updateSampleById(eq(sampleDTO.getId()), any(SampleDTO.class));
     }
 
     @Test
+    void testUpdateSampleByIdValidation() throws Exception {
+        var sampleDTO = SampleDTO.builder()
+                .id(UUID.randomUUID())
+                .build();
+
+        given(sampleService.updateSampleById(eq(sampleDTO.getId()), any(SampleDTO.class)))
+                .willReturn(Optional.of(sampleDTO));
+
+        mockMvc.perform(put(SampleController.SAMPLE_PATH_ID, sampleDTO.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(sampleDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(5)));
+
+        // We omitted the verification because the test doesn't exercise the service method.
+    }
+
+    @Test
     void testUpdateSampleByIdNotFound() throws Exception {
+        var sampleDTO = SampleDTO.builder()
+                .id(UUID.randomUUID())
+                .sampleCode("2722")
+                .status(SampleStatus.PROCESSING)
+                .type(SampleType.BLOOD_TEST)
+                .collectedAt(LocalDateTime.now())
+                .build();
+
         given(sampleService.updateSampleById(any(UUID.class), any(SampleDTO.class)))
                 .willReturn(Optional.empty());
 
         mockMvc.perform(put(SampleController.SAMPLE_PATH_ID, UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(SampleDTO.builder().build())))
+                        .content(objectMapper.writeValueAsString(sampleDTO)))
                 .andExpect(status().isNotFound());
     }
 
@@ -165,7 +207,7 @@ class SampleControllerTest {
 
     @Test
     void testPatchSampleById() throws Exception {
-        SampleDTO sampleDTO = SampleDTO.builder().id(UUID.randomUUID()).sampleCode("55BA").build();
+        var sampleDTO = SampleDTO.builder().id(UUID.randomUUID()).sampleCode("55BA").build();
 
         given(sampleService.patchSampleById(sampleDTO.getId(), sampleDTO)).willReturn(Optional.of(sampleDTO));
 

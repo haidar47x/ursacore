@@ -1,5 +1,7 @@
 package com.ursacore.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,8 +14,10 @@ public class PatientDTO {
 
     private UUID id;
     private Integer version;
-    private String name;
 
+    @NotBlank
+    @NotNull
+    private String name;
     private LocalDateTime createdAt;
     private LocalDateTime updateAt;
 }

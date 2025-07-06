@@ -65,7 +65,7 @@ class PatientControllerTest {
     }
 
     @Test
-    void getGetPatientById() throws Exception {
+    void testGetPatientById() throws Exception {
         var patientDto = PatientDTO.builder().id(UUID.randomUUID()).name("John Doe").build();
         given(patientService.getPatientById(patientDto.getId())).willReturn(Optional.of(patientDto));
 
@@ -87,7 +87,7 @@ class PatientControllerTest {
 
     @Test
     void testCreateNewPatient() throws Exception {
-        var patientDTO = PatientDTO.builder().id(UUID.randomUUID()).build();
+        var patientDTO = PatientDTO.builder().name("John Doe").id(UUID.randomUUID()).build();
         given(patientService.saveNewPatient(patientDTO)).willReturn(patientDTO);
 
         mockMvc.perform(post(PatientController.PATIENT_PATH)
@@ -96,6 +96,19 @@ class PatientControllerTest {
                         .content(objectMapper.writeValueAsString(patientDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
+    }
+
+    @Test
+    void testCreateNewPatientValidation() throws Exception {
+        var patientDTO = PatientDTO.builder().id(UUID.randomUUID()).build();
+        given(patientService.saveNewPatient(any(PatientDTO.class))).willReturn(patientDTO);
+
+        mockMvc.perform(post(PatientController.PATIENT_PATH)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(patientDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(2)));
     }
 
     @Test
