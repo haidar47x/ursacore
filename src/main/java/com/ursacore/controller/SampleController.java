@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +36,7 @@ public class SampleController {
     }
 
     @PostMapping(SAMPLE_PATH)
-    public ResponseEntity<Void> createSample(@RequestBody SampleDTO sampleDTO) {
+    public ResponseEntity<Void> createSample(@Validated @RequestBody SampleDTO sampleDTO) {
         SampleDTO savedSampleDTO = sampleService.saveNewSample(sampleDTO);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/api/v1/sample/" + savedSampleDTO.getId().toString());

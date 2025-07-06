@@ -85,15 +85,30 @@ class SampleControllerTest {
 
     @Test
     void testCreateNewSample() throws Exception {
-        SampleDTO sampleDTO = SampleDTO.builder().id(UUID.randomUUID()).build();
-        given(sampleService.saveNewSample(any(SampleDTO.class))).willReturn(sampleDTO);
+        var sampleDto = SampleDTO.builder()
+                .sampleCode("1890")
+                .id(UUID.randomUUID())
+            .build();
+        given(sampleService.saveNewSample(any(SampleDTO.class))).willReturn(sampleDto);
 
         mockMvc.perform(post(SampleController.SAMPLE_PATH)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(sampleDTO)))
+                        .content(objectMapper.writeValueAsString(sampleDto)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
+    }
+
+    @Test
+    void testCreateNewSampleNullSampleCode() throws Exception {
+        var sampleDto = SampleDTO.builder().id(UUID.randomUUID()).build();
+        given(sampleService.saveNewSample(any(SampleDTO.class))).willReturn(sampleDto);
+
+        mockMvc.perform(post(SampleController.SAMPLE_PATH)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(sampleDto)))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
