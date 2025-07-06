@@ -1,15 +1,10 @@
 package com.ursacore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ursacore.entity.Sample;
-import com.ursacore.mapper.SampleMapper;
 import com.ursacore.model.SampleDTO;
 import com.ursacore.model.SampleStatus;
 import com.ursacore.model.SampleType;
-import com.ursacore.repository.SampleRepository;
 import com.ursacore.service.SampleService;
-import com.ursacore.service.SampleServiceJPA;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -19,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 

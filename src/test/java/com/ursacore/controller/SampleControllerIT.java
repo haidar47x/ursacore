@@ -1,5 +1,7 @@
 package com.ursacore.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ursacore.exception.NotFoundException;
 import com.ursacore.mapper.SampleMapper;
 import com.ursacore.model.SampleDTO;
@@ -7,17 +9,29 @@ import com.ursacore.model.SampleStatus;
 import com.ursacore.model.SampleType;
 import com.ursacore.repository.SampleRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 class SampleControllerIT {
@@ -30,6 +44,19 @@ class SampleControllerIT {
 
     @Autowired
     SampleMapper sampleMapper;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Autowired
+    WebApplicationContext wac;
+
+    MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    }
 
     @Test
     void testListSamples() {
@@ -84,6 +111,20 @@ class SampleControllerIT {
         assertThat(sample.getSampleCode()).isEqualTo(sampleDtoCode);
     }
 
+    @Test
+    void testCreateNewSampleValidation() throws Exception {
+        var sampleDto = SampleDTO.builder().
+                    id(UUID.randomUUID())
+                .build();
+
+        mockMvc.perform(post(SampleController.SAMPLE_PATH)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(sampleDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(5)));
+    }
+
     @Rollback
     @Transactional
     @Test
@@ -100,6 +141,23 @@ class SampleControllerIT {
 
         var savedSample = sampleRepository.findById(sample.getId()).get();
         assertThat(savedSample.getSampleCode()).isEqualTo(sampleDtoCode);
+    }
+
+    @Test
+    void testUpdateSampleByIdValidation() throws Exception {
+        final var sampleDtoCode = "832F".repeat(36);
+        var sample = sampleRepository.findAll().getFirst();
+        var sampleDto = sampleMapper.sampleToSampleDto(sample);
+        sampleDto.setId(null);
+        sampleDto.setVersion(null);
+        sampleDto.setSampleCode(sampleDtoCode);
+
+        mockMvc.perform(put(SampleController.SAMPLE_PATH_ID, sample.getId())
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(sampleDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(5)));
     }
 
     @Test

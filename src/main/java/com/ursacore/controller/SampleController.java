@@ -3,6 +3,7 @@ package com.ursacore.controller;
 import com.ursacore.exception.NotFoundException;
 import com.ursacore.model.SampleDTO;
 import com.ursacore.service.SampleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -44,7 +45,7 @@ public class SampleController {
     }
 
     @PutMapping(SAMPLE_PATH_ID)
-    public ResponseEntity<Void> updateSampleById(@PathVariable("sampleId") UUID sampleId, @Validated @RequestBody SampleDTO sampleDTO) {
+    public ResponseEntity<Void> updateSampleById(@PathVariable("sampleId") UUID sampleId, @Valid @RequestBody SampleDTO sampleDTO) {
         sampleService.updateSampleById(sampleId, sampleDTO).orElseThrow(NotFoundException::new);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
