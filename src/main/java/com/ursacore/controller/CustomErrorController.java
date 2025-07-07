@@ -15,16 +15,14 @@ import java.util.Map;
 public class CustomErrorController {
 
     @ExceptionHandler
-    ResponseEntity handleJpaViolations(TransactionSystemException exception) {
+    ResponseEntity<?> handleJpaViolations(TransactionSystemException exception) {
         ResponseEntity.BodyBuilder responseEntity = ResponseEntity.badRequest();
-        if (exception.getCause().getCause() instanceof ConstraintViolationException ve) {
+
+        Throwable cause = exception.getCause();
+        if (cause != null && cause.getCause() instanceof ConstraintViolationException ve) {
             List<Map<String, String>> errors = ve.getConstraintViolations()
                     .stream()
-                    .map(violation -> {
-                        Map<String, String> errMap = new HashMap<>();
-                        errMap.put(violation.getPropertyPath().toString(), violation.getMessage());
-                        return errMap;
-                    })
+                    .map(violation -> Map.of(violation.getPropertyPath().toString(), violation.getMessage()))
                     .toList();
             return responseEntity.body(errors);
         }
@@ -35,11 +33,7 @@ public class CustomErrorController {
     ResponseEntity<List<Map<String, String>>> handleBindErrors(MethodArgumentNotValidException exception) {
         List<Map<String, String>> errorList = exception.getFieldErrors()
                 .stream()
-                .map(error -> {
-                    Map<String, String> errMap = new HashMap<>();
-                    errMap.put(error.getField(), error.getDefaultMessage());
-                    return errMap;
-                })
+                .map(err -> Map.of(err.getField(), err.getDefaultMessage()))
                 .toList();
         return ResponseEntity.badRequest().body(errorList);
     }
