@@ -116,7 +116,7 @@ class SampleControllerTest {
 
     @Test
     void testUpdateSampleById() throws Exception {
-        var sampleDTO = SampleDTO.builder()
+        var sampleDto = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .sampleCode("2722")
                 .status(SampleStatus.PROCESSING)
@@ -124,17 +124,19 @@ class SampleControllerTest {
                 .collectedAt(LocalDateTime.now())
             .build();
 
-        given(sampleService.updateSampleById(eq(sampleDTO.getId()), any(SampleDTO.class)))
-                .willReturn(Optional.of(sampleDTO));
+        given(sampleService.updateSampleById(eq(sampleDto.getId()), any(SampleDTO.class)))
+                .willReturn(Optional.of(sampleDto));
 
-        mockMvc.perform(put(SampleController.SAMPLE_PATH_ID, sampleDTO.getId())
+        mockMvc.perform(put(SampleController.SAMPLE_PATH_ID, sampleDto.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(sampleDTO)))
+                        .content(objectMapper.writeValueAsString(sampleDto)))
                 .andExpect(status().isNoContent());
 
-        // Verify updateSampleById was called with the given ID.
-        verify(sampleService).updateSampleById(eq(sampleDTO.getId()), any(SampleDTO.class));
+        // Verify updateSampleById was called with the given ID and sampleDto.
+        verify(sampleService).updateSampleById(uuidArgumentCaptor.capture(), sampleArgumentCaptor.capture());
+        assertThat(uuidArgumentCaptor.getValue()).isEqualTo(sampleDto.getId());
+        assertThat(sampleArgumentCaptor.getValue().getSampleCode()).isEqualTo(sampleDto.getSampleCode());
     }
 
     @Test

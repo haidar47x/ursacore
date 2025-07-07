@@ -31,7 +31,7 @@ public class Sample {
 
     @NotNull
     @NotBlank
-    @Size(max = 4)
+    @Size(min = 4, max = 4)
     @Column(length = 4)
     private String sampleCode;
 

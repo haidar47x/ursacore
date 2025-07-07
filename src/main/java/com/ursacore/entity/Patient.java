@@ -31,7 +31,7 @@ public class Patient {
     // we validate the value prior to hitting the database.
     @NotBlank
     @NotNull
-    @Size(max = 128)
+    @Size(min = 2, max = 128)
     @Column(length = 128)
     private String name;
 

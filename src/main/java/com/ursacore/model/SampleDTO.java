@@ -2,6 +2,7 @@ package com.ursacore.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
@@ -22,6 +23,7 @@ public class SampleDTO {
 
     @NotBlank
     @NotNull
+    @Size(min = 4, max = 4)
     private String sampleCode;
 
     @NotNull
