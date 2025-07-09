@@ -1,10 +1,8 @@
 package com.ursacore.controller;
 
-import com.ursacore.entity.Patient;
 import com.ursacore.exception.NotFoundException;
 import com.ursacore.mapper.PatientMapper;
 import com.ursacore.model.PatientDTO;
-import com.ursacore.model.SampleDTO;
 import com.ursacore.repository.PatientRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -102,7 +100,7 @@ class PatientControllerIT {
     @Test
     void testUpdatePatientByIdNotFound() {
         assertThrows(NotFoundException.class, () -> patientController.updatePatientById(
-                UUID.randomUUID(),PatientDTO.builder().build()));
+                UUID.randomUUID(), PatientDTO.builder().build()));
     }
 
     @Rollback
