@@ -39,9 +39,11 @@ public class Sample {
     private String sampleCode;
 
     @NotNull
+    @JdbcTypeCode(SqlTypes.SMALLINT)
     private SampleType type;
 
     @NotNull
+    @JdbcTypeCode(SqlTypes.SMALLINT)
     private SampleStatus status;
 
     @NotNull
