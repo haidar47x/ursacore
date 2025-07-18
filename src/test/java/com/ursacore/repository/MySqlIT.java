@@ -29,6 +29,6 @@ public class MySqlIT {
     @Test
     void testListSamples() {
         List<Sample> samples = sampleRepository.findAll();
-        assertThat(samples.size()).isEqualTo(3);
+        assertThat(samples.size()).isEqualTo(2503);
     }
 }

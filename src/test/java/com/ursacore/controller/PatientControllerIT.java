@@ -2,6 +2,8 @@ package com.ursacore.controller;
 
 import com.ursacore.exception.NotFoundException;
 import com.ursacore.mapper.PatientMapper;
+import com.ursacore.model.BloodType;
+import com.ursacore.model.Gender;
 import com.ursacore.model.PatientDTO;
 import com.ursacore.repository.PatientRepository;
 import jakarta.transaction.Transactional;
@@ -33,7 +35,7 @@ class PatientControllerIT {
     void testListPatients() {
         List<PatientDTO> patientDtos = patientController.listPatients();
 
-        assertThat(patientDtos.size()).isEqualTo(3);
+        assertThat(patientDtos.size()).isEqualTo(2503);
     }
 
     @Rollback
@@ -65,6 +67,12 @@ class PatientControllerIT {
         var patientName = "Doe John";
         var patientDto = PatientDTO.builder()
                 .name(patientName)
+                .age(30)
+                .gender(Gender.MALE)
+                .bloodType(BloodType.A_NEGATIVE)
+                .medicalCondition("Hypotension")
+                .doctor("Dr. Khan")
+                .hospital("General Hospital")
                 .build();
         var responseEntity = patientController.createPatient(patientDto);
 

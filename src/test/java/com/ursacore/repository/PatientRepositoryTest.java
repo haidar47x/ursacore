@@ -2,6 +2,8 @@ package com.ursacore.repository;
 
 import com.ursacore.entity.Patient;
 import com.ursacore.entity.Sample;
+import com.ursacore.model.BloodType;
+import com.ursacore.model.Gender;
 import com.ursacore.model.SampleStatus;
 import com.ursacore.model.SampleType;
 import jakarta.validation.ConstraintViolationException;
@@ -24,6 +26,11 @@ class PatientRepositoryTest {
     void testSavePatient() {
         var patient = Patient.builder()
                 .name("Doe John")
+                .age(30)
+                .gender(Gender.MALE)
+                .bloodType(BloodType.A_NEGATIVE)
+                .medicalCondition("Diabetes")
+                .hospital("General Hospital")
                 .build();
 
         var saved = patientRepository.save(patient);
@@ -32,6 +39,7 @@ class PatientRepositoryTest {
         assertThat(saved).isNotNull();
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getName()).isEqualTo(patient.getName());
+        assertThat(saved.getBloodType()).isEqualTo(patient.getBloodType());
     }
 
     @Test

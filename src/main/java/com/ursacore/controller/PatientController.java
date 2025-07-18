@@ -3,7 +3,6 @@ package com.ursacore.controller;
 import com.ursacore.exception.NotFoundException;
 import com.ursacore.model.PatientDTO;
 import com.ursacore.service.PatientService;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

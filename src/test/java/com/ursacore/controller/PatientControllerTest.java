@@ -3,6 +3,8 @@ package com.ursacore.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ursacore.entity.Patient;
 import com.ursacore.mapper.PatientMapper;
+import com.ursacore.model.BloodType;
+import com.ursacore.model.Gender;
 import com.ursacore.model.PatientDTO;
 import com.ursacore.repository.PatientRepository;
 import com.ursacore.service.PatientService;
@@ -87,13 +89,22 @@ class PatientControllerTest {
 
     @Test
     void testCreateNewPatient() throws Exception {
-        var patientDTO = PatientDTO.builder().name("John Doe").id(UUID.randomUUID()).build();
-        given(patientService.saveNewPatient(patientDTO)).willReturn(patientDTO);
+        var patientDto  = PatientDTO.builder()
+                    .id(UUID.randomUUID())
+                    .name("John Doe")
+                    .age(30)
+                    .gender(Gender.MALE)
+                    .bloodType(BloodType.A_NEGATIVE)
+                    .doctor("Dr. Khan")
+                    .medicalCondition("Seborrheic Dermatitis")
+                    .hospital("Community Hospital")
+                .build();
+        given(patientService.saveNewPatient(patientDto)).willReturn(patientDto);
 
         mockMvc.perform(post(PatientController.PATIENT_PATH)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(patientDTO)))
+                        .content(objectMapper.writeValueAsString(patientDto)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"));
     }
@@ -108,12 +119,21 @@ class PatientControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(patientDTO)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(2)));
+                .andExpect(jsonPath("$.length()", is(7)));
     }
 
     @Test
     void testUpdatePatientById() throws Exception {
-        var patientDto = PatientDTO.builder().id(UUID.randomUUID()).name("John Doe").build();
+        var patientDto  = PatientDTO.builder()
+                    .id(UUID.randomUUID())
+                    .name("John Doe")
+                    .age(30)
+                    .gender(Gender.MALE)
+                    .bloodType(BloodType.A_NEGATIVE)
+                    .doctor("Dr. Khan")
+                    .medicalCondition("Seborrheic Dermatitis")
+                    .hospital("Community Hospital")
+                .build();
         
         given(patientService.updatePatientById(any(UUID.class), any(PatientDTO.class))).willReturn(Optional.of(patientDto));
 
