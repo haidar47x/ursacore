@@ -32,9 +32,6 @@ public class BootstrapData implements CommandLineRunner {
     }
 
     public void initPatientCsvData() throws FileNotFoundException {
-
-        if (patientRepository.count() > 0) return;
-
         File file = ResourceUtils.getFile("classpath:csvdata/patients.csv");
         List<PatientCsvRecord> records = patientCsvService.convertCsv(file);
 
@@ -65,6 +62,8 @@ public class BootstrapData implements CommandLineRunner {
                     .doctor(record.getDoctor())
                     .medicalCondition(record.getMedicalCondition())
                     .hospital(record.getHospital())
+                    .createdAt(LocalDateTime.now())
+                    .updateAt(LocalDateTime.now())
                     .build();
 
             patientRepository.save(patient);
