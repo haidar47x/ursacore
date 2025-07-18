@@ -1,6 +1,9 @@
 package com.ursacore.entity;
 
+import com.ursacore.model.BloodType;
+import com.ursacore.model.Gender;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -38,6 +41,28 @@ public class Patient {
     @Column(length = 128)
     private String name;
 
+    @NotNull
+    @Max(128)
+    private Integer age;
+
+    @NotNull
+    @JdbcTypeCode(SqlTypes.SMALLINT)
+    private Gender gender;
+
+    @NotNull
+    @JdbcTypeCode(SqlTypes.SMALLINT)
+    private BloodType bloodType;
+
+    @NotBlank
+    @NotNull
+    @Size(max = 256)
+    private String medicalCondition;
+
+    @Size(max = 128)
+    private String doctor;
+
+    @Size(max = 256)
+    private String hospital;
     private LocalDateTime createdAt;
     private LocalDateTime updateAt;
 }

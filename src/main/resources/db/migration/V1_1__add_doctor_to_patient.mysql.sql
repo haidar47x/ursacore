@@ -1,0 +1,1 @@
+ALTER TABLE patient ADD COLUMN doctor VARCHAR(128) NULL;
