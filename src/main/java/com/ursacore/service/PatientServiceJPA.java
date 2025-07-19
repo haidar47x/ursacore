@@ -23,7 +23,7 @@ public class PatientServiceJPA implements PatientService {
     private final PatientMapper patientMapper;
 
     @Override
-    public List<PatientDTO> listPatients() {
+    public List<PatientDTO> listPatients(String name) {
         return patientRepository.findAll()
                 .stream()
                 .map(patientMapper::patientToPatientDto)

@@ -45,7 +45,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public List<PatientDTO> listPatients() {
+    public List<PatientDTO> listPatients(String name) {
         return new ArrayList<>(patientMap.values());
     }
 

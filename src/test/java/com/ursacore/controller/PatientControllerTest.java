@@ -1,16 +1,10 @@
 package com.ursacore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ursacore.entity.Patient;
-import com.ursacore.mapper.PatientMapper;
 import com.ursacore.model.BloodType;
 import com.ursacore.model.Gender;
 import com.ursacore.model.PatientDTO;
-import com.ursacore.repository.PatientRepository;
 import com.ursacore.service.PatientService;
-import com.ursacore.service.PatientServiceImpl;
-import com.ursacore.service.PatientServiceJPA;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -57,7 +51,7 @@ class PatientControllerTest {
                 PatientDTO.builder().name("C").build()
         );
 
-        given(patientService.listPatients()).willReturn(patientList);
+        given(patientService.listPatients(null)).willReturn(patientList);
 
         mockMvc.perform(get(PatientController.PATIENT_PATH)
                         .accept(MediaType.APPLICATION_JSON))

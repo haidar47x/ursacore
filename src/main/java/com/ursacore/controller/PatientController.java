@@ -25,8 +25,8 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping(PATIENT_PATH)
-    public List<PatientDTO> listPatients() {
-        return patientService.listPatients();
+    public List<PatientDTO> listPatients(@RequestParam(value = "name", required = false) String name) {
+        return patientService.listPatients(name);
     }
 
     @GetMapping(PATIENT_PATH_ID)
