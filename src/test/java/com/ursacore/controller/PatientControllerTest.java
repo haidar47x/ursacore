@@ -53,7 +53,16 @@ class PatientControllerTest {
 
         given(patientService.listPatients(null)).willReturn(patientList);
 
+        // No request params
         mockMvc.perform(get(PatientController.PATIENT_PATH)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(3)));
+
+        // Request param: name
+        mockMvc.perform(get(PatientController.PATIENT_PATH)
+                        .param("name", "A")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

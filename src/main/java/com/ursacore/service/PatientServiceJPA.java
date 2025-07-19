@@ -7,7 +7,9 @@ import com.ursacore.repository.PatientRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,10 +26,21 @@ public class PatientServiceJPA implements PatientService {
 
     @Override
     public List<PatientDTO> listPatients(String name) {
-        return patientRepository.findAll()
+        List<Patient> patients;
+        if (StringUtils.hasText(name)) {
+            patients = listPatientsByName(name);
+        } else {
+            patients = patientRepository.findAll();
+        }
+
+        return patients
                 .stream()
                 .map(patientMapper::patientToPatientDto)
                 .collect(Collectors.toList());
+    }
+
+    private List<Patient> listPatientsByName(String name) {
+        return patientRepository.findAllByNameIsLikeIgnoreCase("%" + name + "%");
     }
 
     @Override

@@ -33,7 +33,7 @@ class PatientControllerIT {
 
     @Test
     void testListPatients() {
-        List<PatientDTO> patientDtos = patientController.listPatients();
+        List<PatientDTO> patientDtos = patientController.listPatients(null);
 
         assertThat(patientDtos.size()).isEqualTo(2503);
     }
@@ -43,7 +43,7 @@ class PatientControllerIT {
     @Test
     void testListPatientsEmpty() {
         patientRepository.deleteAll();
-        List<PatientDTO> patientDtos = patientController.listPatients();
+        List<PatientDTO> patientDtos = patientController.listPatients(null);
 
         assertThat(patientDtos.size()).isEqualTo(0);
     }
