@@ -1,5 +1,6 @@
 package com.ursacore.service;
 
+import com.ursacore.model.BloodType;
 import com.ursacore.model.PatientDTO;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 public interface PatientService {
 
-    List<PatientDTO> listPatients(String name);
+    List<PatientDTO> listPatients(String name, BloodType bloodType);
 
     Optional<PatientDTO> getPatientById(UUID patientId);
 

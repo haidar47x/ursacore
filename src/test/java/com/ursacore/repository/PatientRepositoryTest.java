@@ -70,4 +70,20 @@ class PatientRepositoryTest {
         assertThat(patients).isNotEmpty();
         assertThat(patients.size()).isEqualTo(42);
     }
+
+    @Test
+    void listPatientsByBloodType() {
+        var patients = patientRepository.findAllByBloodType(BloodType.A_NEGATIVE);
+        assertThat(patients).isNotNull();
+        assertThat(patients).isNotEmpty();
+        assertThat(patients.size()).isEqualTo(303);
+    }
+
+    @Test
+    void listPatientsByNameAndBloodType() {
+        var patients = patientRepository.findAllByNameIsLikeIgnoreCaseAndBloodType("%Jon%", BloodType.A_NEGATIVE);
+        assertThat(patients).isNotNull();
+        assertThat(patients).isNotEmpty();
+        assertThat(patients.size()).isEqualTo(4);
+    }
 }

@@ -1,5 +1,6 @@
 package com.ursacore.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ursacore.exception.NotFoundException;
 import com.ursacore.mapper.PatientMapper;
 import com.ursacore.model.BloodType;
@@ -7,17 +8,30 @@ import com.ursacore.model.Gender;
 import com.ursacore.model.PatientDTO;
 import com.ursacore.repository.PatientRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 import java.util.UUID;
 
+import static org.hamcrest.core.Is.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @SpringBootTest
 class PatientControllerIT {
@@ -31,11 +45,51 @@ class PatientControllerIT {
     @Autowired
     PatientMapper patientMapper;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Autowired
+    WebApplicationContext wac;
+
+    MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    }
+
     @Test
     void testListPatients() {
-        List<PatientDTO> patientDtos = patientController.listPatients(null);
+        List<PatientDTO> patientDtos = patientController.listPatients(null, null);
 
         assertThat(patientDtos.size()).isEqualTo(2503);
+    }
+
+    @Test
+    void testListPatientsByName() throws Exception {
+        mockMvc.perform(get(PatientController.PATIENT_PATH)
+                        .queryParam("name", "Joe"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(7)));
+    }
+
+    @Test
+    void testListPatientsByBloodType() throws Exception {
+        mockMvc.perform(get(PatientController.PATIENT_PATH)
+                        .queryParam("bloodType", BloodType.A_NEGATIVE.name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(7)));
+    }
+
+    @Test
+    void testListPatientsByNameAndBloodType() {
+        var name = "%Joe%";
+        var bloodType = BloodType.A_POSITIVE;
+        var patientDtos = patientController.listPatients(name, bloodType);
+
+        assertThat(patientDtos.size()).isEqualTo(333);
+        assertThat(patientDtos.getFirst().getName().toLowerCase()).contains("joe");
+        assertThat(patientDtos.getFirst().getBloodType()).isEqualTo(bloodType);
     }
 
     @Rollback
@@ -43,7 +97,7 @@ class PatientControllerIT {
     @Test
     void testListPatientsEmpty() {
         patientRepository.deleteAll();
-        List<PatientDTO> patientDtos = patientController.listPatients(null);
+        List<PatientDTO> patientDtos = patientController.listPatients(null, null);
 
         assertThat(patientDtos.size()).isEqualTo(0);
     }

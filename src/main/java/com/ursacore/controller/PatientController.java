@@ -1,6 +1,7 @@
 package com.ursacore.controller;
 
 import com.ursacore.exception.NotFoundException;
+import com.ursacore.model.BloodType;
 import com.ursacore.model.PatientDTO;
 import com.ursacore.service.PatientService;
 import lombok.AllArgsConstructor;
@@ -25,8 +26,9 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping(PATIENT_PATH)
-    public List<PatientDTO> listPatients(@RequestParam(value = "name", required = false) String name) {
-        return patientService.listPatients(name);
+    public List<PatientDTO> listPatients(@RequestParam(value = "name", required = false) String name,
+                                         @RequestParam(value = "bloodType", required = false) BloodType bloodType)  {
+        return patientService.listPatients(name, bloodType);
     }
 
     @GetMapping(PATIENT_PATH_ID)

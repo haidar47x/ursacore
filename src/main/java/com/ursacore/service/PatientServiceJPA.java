@@ -2,6 +2,7 @@ package com.ursacore.service;
 
 import com.ursacore.entity.Patient;
 import com.ursacore.mapper.PatientMapper;
+import com.ursacore.model.BloodType;
 import com.ursacore.model.PatientDTO;
 import com.ursacore.repository.PatientRepository;
 import lombok.AllArgsConstructor;
@@ -25,10 +26,14 @@ public class PatientServiceJPA implements PatientService {
     private final PatientMapper patientMapper;
 
     @Override
-    public List<PatientDTO> listPatients(String name) {
+    public List<PatientDTO> listPatients(String name, BloodType bloodType) {
         List<Patient> patients;
-        if (StringUtils.hasText(name)) {
+        if (StringUtils.hasText(name) && bloodType == null) {
             patients = listPatientsByName(name);
+        } else if (!StringUtils.hasText(name) && bloodType != null) {
+            patients = listPatientsByBloodType(bloodType);
+        } else if (StringUtils.hasText(name) && bloodType != null) {
+            patients = listPatientsByNameAndBloodType(name, bloodType);
         } else {
             patients = patientRepository.findAll();
         }
@@ -39,8 +44,17 @@ public class PatientServiceJPA implements PatientService {
                 .collect(Collectors.toList());
     }
 
+    private List<Patient> listPatientsByNameAndBloodType(String name, BloodType bloodType) {
+        return patientRepository.findAllByNameIsLikeIgnoreCaseAndBloodType(
+                "%" + name + "%", bloodType);
+    }
+
     private List<Patient> listPatientsByName(String name) {
         return patientRepository.findAllByNameIsLikeIgnoreCase("%" + name + "%");
+    }
+
+    private List<Patient> listPatientsByBloodType(BloodType type) {
+        return patientRepository.findAllByBloodType(type);
     }
 
     @Override

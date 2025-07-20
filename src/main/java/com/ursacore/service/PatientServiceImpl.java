@@ -1,5 +1,6 @@
 package com.ursacore.service;
 
+import com.ursacore.model.BloodType;
 import com.ursacore.model.PatientDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public List<PatientDTO> listPatients(String name) {
+    public List<PatientDTO> listPatients(String name, BloodType bloodType) {
         return new ArrayList<>(patientMap.values());
     }
 

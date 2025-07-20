@@ -51,7 +51,7 @@ class PatientControllerTest {
                 PatientDTO.builder().name("C").build()
         );
 
-        given(patientService.listPatients(null)).willReturn(patientList);
+        given(patientService.listPatients(null, null)).willReturn(patientList);
 
         // No request params
         mockMvc.perform(get(PatientController.PATIENT_PATH)
@@ -59,14 +59,27 @@ class PatientControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()", is(3)));
+    }
 
-        // Request param: name
+    @Test
+    void testListPatientsByNameAndBloodType() throws Exception {
+        var patientList = List.of(
+                PatientDTO.builder().name("A").bloodType(BloodType.A_POSITIVE).build(),
+                PatientDTO.builder().name("B").bloodType(BloodType.A_POSITIVE).build(),
+                PatientDTO.builder().name("C").bloodType(BloodType.O_NEGATIVE).build()
+        );
+
+        given(patientService.listPatients("A", BloodType.A_POSITIVE)).willReturn(patientList);
+
         mockMvc.perform(get(PatientController.PATIENT_PATH)
                         .param("name", "A")
+                        .param("bloodType", BloodType.A_POSITIVE.name())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(3)));
+                .andExpect(jsonPath("$.length()", is(3)))
+                .andExpect(jsonPath("$[0].name", is("A")))
+                .andExpect(jsonPath("$[0].bloodType", is(BloodType.A_POSITIVE.name())));
     }
 
     @Test
