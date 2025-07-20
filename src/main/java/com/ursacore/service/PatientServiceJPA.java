@@ -25,6 +25,7 @@ public class PatientServiceJPA implements PatientService {
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
 
+    // TODO: Refactor to specifications
     @Override
     public List<PatientDTO> listPatients(String name, BloodType bloodType) {
         List<Patient> patients;
