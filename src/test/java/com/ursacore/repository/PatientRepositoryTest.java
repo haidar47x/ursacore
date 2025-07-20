@@ -2,11 +2,8 @@ package com.ursacore.repository;
 
 import com.ursacore.bootstrap.BootstrapData;
 import com.ursacore.entity.Patient;
-import com.ursacore.entity.Sample;
 import com.ursacore.model.BloodType;
 import com.ursacore.model.Gender;
-import com.ursacore.model.SampleStatus;
-import com.ursacore.model.SampleType;
 import com.ursacore.service.PatientCsvServiceImpl;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
@@ -15,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.Rollback;
-
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

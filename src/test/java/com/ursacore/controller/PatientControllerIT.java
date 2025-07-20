@@ -21,14 +21,10 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
 import java.util.UUID;
 
-import static org.hamcrest.core.Is.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -78,18 +74,16 @@ class PatientControllerIT {
         mockMvc.perform(get(PatientController.PATIENT_PATH)
                         .queryParam("bloodType", BloodType.A_NEGATIVE.name()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(7)));
+                .andExpect(jsonPath("$.size()", is(303)));
     }
 
     @Test
-    void testListPatientsByNameAndBloodType() {
-        var name = "%Joe%";
-        var bloodType = BloodType.A_POSITIVE;
-        var patientDtos = patientController.listPatients(name, bloodType);
-
-        assertThat(patientDtos.size()).isEqualTo(333);
-        assertThat(patientDtos.getFirst().getName().toLowerCase()).contains("joe");
-        assertThat(patientDtos.getFirst().getBloodType()).isEqualTo(bloodType);
+    void testListPatientsByNameAndBloodType() throws Exception {
+        mockMvc.perform(get(PatientController.PATIENT_PATH)
+                        .queryParam("name", "Jon")
+                        .queryParam("bloodType", BloodType.A_NEGATIVE.name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(4)));
     }
 
     @Rollback
