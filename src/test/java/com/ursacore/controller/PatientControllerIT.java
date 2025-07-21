@@ -12,13 +12,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,10 +55,19 @@ class PatientControllerIT {
     }
 
     @Test
-    void testListPatients() {
-        List<PatientDTO> patientDtos = patientController.listPatients(null, null);
+    void testListPatients() throws Exception {
+        mockMvc.perform(get(PatientController.PATIENT_PATH))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()", is(25)));
+    }
 
-        assertThat(patientDtos.size()).isEqualTo(2503);
+    @Test
+    void testListPatientsPageSize() throws Exception {
+        final int pageSize = 50;
+        mockMvc.perform(get(PatientController.PATIENT_PATH)
+                        .queryParam("numResults", String.valueOf(pageSize)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()", is(pageSize)));
     }
 
     @Test
@@ -66,7 +75,7 @@ class PatientControllerIT {
         mockMvc.perform(get(PatientController.PATIENT_PATH)
                         .queryParam("name", "Joe"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(7)));
+                .andExpect(jsonPath("$.content.length()", is(7)));
     }
 
     @Test
@@ -74,7 +83,7 @@ class PatientControllerIT {
         mockMvc.perform(get(PatientController.PATIENT_PATH)
                         .queryParam("bloodType", BloodType.A_NEGATIVE.name()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(303)));
+                .andExpect(jsonPath("$.content.length()", is(25)));
     }
 
     @Test
@@ -83,7 +92,7 @@ class PatientControllerIT {
                         .queryParam("name", "Jon")
                         .queryParam("bloodType", BloodType.A_NEGATIVE.name()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(4)));
+                .andExpect(jsonPath("$.content.length()", is(4)));
     }
 
     @Rollback
@@ -91,9 +100,9 @@ class PatientControllerIT {
     @Test
     void testListPatientsEmpty() {
         patientRepository.deleteAll();
-        List<PatientDTO> patientDtos = patientController.listPatients(null, null);
+        Page<PatientDTO> patientDtos = patientController.listPatients(null, null, 1, 25);
 
-        assertThat(patientDtos.size()).isEqualTo(0);
+        assertThat(patientDtos.getContent().size()).isEqualTo(0);
     }
 
     @Test
@@ -121,7 +130,7 @@ class PatientControllerIT {
                 .medicalCondition("Hypotension")
                 .doctor("Dr. Khan")
                 .hospital("General Hospital")
-                .build();
+            .build();
         var responseEntity = patientController.createPatient(patientDto);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(201));

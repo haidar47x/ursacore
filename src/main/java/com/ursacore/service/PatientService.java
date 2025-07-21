@@ -2,14 +2,14 @@ package com.ursacore.service;
 
 import com.ursacore.model.BloodType;
 import com.ursacore.model.PatientDTO;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface PatientService {
 
-    List<PatientDTO> listPatients(String name, BloodType bloodType);
+    Page<PatientDTO> listPatients(String name, BloodType bloodType, Integer pageNumber, Integer pageSize);
 
     Optional<PatientDTO> getPatientById(UUID patientId);
 

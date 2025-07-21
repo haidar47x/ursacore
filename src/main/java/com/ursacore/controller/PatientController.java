@@ -6,13 +6,13 @@ import com.ursacore.model.PatientDTO;
 import com.ursacore.service.PatientService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -26,9 +26,11 @@ public class PatientController {
     private final PatientService patientService;
 
     @GetMapping(PATIENT_PATH)
-    public List<PatientDTO> listPatients(@RequestParam(value = "name", required = false) String name,
-                                         @RequestParam(value = "bloodType", required = false) BloodType bloodType)  {
-        return patientService.listPatients(name, bloodType);
+    public Page<PatientDTO> listPatients(@RequestParam(value = "name", required = false) String name,
+                                         @RequestParam(value = "bloodType", required = false) BloodType bloodType,
+                                         @RequestParam(value = "page", required = false) Integer pageNumber,
+                                         @RequestParam(value = "numResults", required = false) Integer pageSize)  {
+        return patientService.listPatients(name, bloodType, pageNumber, pageSize);
     }
 
     @GetMapping(PATIENT_PATH_ID)

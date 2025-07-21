@@ -10,11 +10,15 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -48,17 +52,17 @@ class PatientControllerTest {
         var patientList = List.of(
                 PatientDTO.builder().name("A").build(),
                 PatientDTO.builder().name("B").build(),
-                PatientDTO.builder().name("C").build()
-        );
+                PatientDTO.builder().name("C").build());
 
-        given(patientService.listPatients(null, null)).willReturn(patientList);
+        var patientPage = new PageImpl<>(new ArrayList<>(patientList));
+        given(patientService.listPatients(any(), any(), any(), any())).willReturn(patientPage);
 
         // No request params
         mockMvc.perform(get(PatientController.PATIENT_PATH)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(3)));
+                .andExpect(jsonPath("$.content.length()", is(3)));
     }
 
     @Test
@@ -68,8 +72,7 @@ class PatientControllerTest {
                 PatientDTO.builder().name("B").bloodType(BloodType.A_POSITIVE).build(),
                 PatientDTO.builder().name("C").bloodType(BloodType.O_NEGATIVE).build()
         );
-
-        given(patientService.listPatients("A", BloodType.A_POSITIVE)).willReturn(patientList);
+        given(patientService.listPatients(any(), any(), any(), any())).willReturn(new PageImpl<>(new ArrayList<>(patientList)));
 
         mockMvc.perform(get(PatientController.PATIENT_PATH)
                         .param("name", "A")
@@ -77,9 +80,9 @@ class PatientControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(3)))
-                .andExpect(jsonPath("$[0].name", is("A")))
-                .andExpect(jsonPath("$[0].bloodType", is(BloodType.A_POSITIVE.name())));
+                .andExpect(jsonPath("$.content.length()", is(3)))
+                .andExpect(jsonPath("$.content[0].name", is("A")))
+                .andExpect(jsonPath("$.content[0].bloodType", is(BloodType.A_POSITIVE.name())));
     }
 
     @Test

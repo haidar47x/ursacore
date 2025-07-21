@@ -1,113 +1,79 @@
 package com.ursacore.service;
 
+import com.ursacore.entity.Sample;
+import com.ursacore.mapper.SampleMapper;
 import com.ursacore.model.SampleDTO;
-import com.ursacore.model.SampleStatus;
-import com.ursacore.model.SampleType;
-import lombok.extern.slf4j.Slf4j;
+import com.ursacore.repository.SampleRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
-@Slf4j
+@Primary
 @Service
+@AllArgsConstructor
 public class SampleServiceImpl implements SampleService {
 
-    private final Map<UUID, SampleDTO> sampleMap;
-
-    public SampleServiceImpl() {
-        SampleDTO s1 = SampleDTO.builder()
-                .id(UUID.randomUUID())
-                .version(1)
-                .sampleCode("87ED")
-                .status(SampleStatus.PROCESSING)
-                .type(SampleType.BLOOD_TEST)
-                .collectedAt(LocalDateTime.now())
-                .createdAt(LocalDateTime.now())
-                .updateAt(LocalDateTime.now())
-            .build();
-
-        SampleDTO s2 = SampleDTO.builder()
-                .id(UUID.randomUUID())
-                .version(1)
-                .sampleCode("82ED")
-                .status(SampleStatus.PROCESSING)
-                .type(SampleType.BLOOD_TEST)
-                .collectedAt(LocalDateTime.now())
-                .createdAt(LocalDateTime.now())
-                .updateAt(LocalDateTime.now())
-            .build();
-
-        SampleDTO s3 = SampleDTO.builder()
-                .id(UUID.randomUUID())
-                .version(1)
-                .sampleCode("85ED")
-                .status(SampleStatus.PROCESSING)
-                .type(SampleType.BLOOD_TEST)
-                .collectedAt(LocalDateTime.now())
-                .createdAt(LocalDateTime.now())
-                .updateAt(LocalDateTime.now())
-            .build();
-
-        this.sampleMap = new HashMap<>();
-        sampleMap.put(s1.getId(), s1);
-        sampleMap.put(s2.getId(), s2);
-        sampleMap.put(s3.getId(), s3);
-    }
+    private final SampleRepository sampleRepository;
+    private final SampleMapper sampleMapper;
 
     @Override
     public List<SampleDTO> listSamples() {
-        return new ArrayList<>(sampleMap.values());
+        return sampleRepository.findAll()
+                .stream()
+                .map(sampleMapper::sampleToSampleDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Optional<SampleDTO> getSampleById(UUID sampleId) {
-        return Optional.of(sampleMap.get(sampleId));
+        return Optional.ofNullable(
+                sampleMapper.sampleToSampleDto(
+                        sampleRepository.findById(sampleId).orElse(null)));
     }
 
     @Override
     public SampleDTO saveNewSample(SampleDTO sampleDTO) {
-        SampleDTO savedSampleDTO = SampleDTO.builder()
-                .id(UUID.randomUUID())
-                .version(1)
-                .sampleCode(sampleDTO.getSampleCode())
-                .type(sampleDTO.getType())
-                .status(sampleDTO.getStatus())
-                .collectedAt(LocalDateTime.now())
-                .createdAt(LocalDateTime.now())
-                .updateAt(LocalDateTime.now())
-            .build();
-
-        sampleMap.put(savedSampleDTO.getId(), savedSampleDTO);
-        return savedSampleDTO;
+        Sample sample = sampleRepository.save(sampleMapper.sampleDtoToSample(sampleDTO));
+        return sampleMapper.sampleToSampleDto(sample);
     }
 
     @Override
     public Optional<SampleDTO> updateSampleById(UUID sampleId, SampleDTO sampleDTO) {
-        SampleDTO existing = sampleMap.get(sampleId);
-        if (existing == null) {
-            return Optional.empty();
-        }
-        existing.setUpdateAt(LocalDateTime.now());
-        existing.setStatus(sampleDTO.getStatus());
-        existing.setType(sampleDTO.getType());
-        existing.setSampleCode(sampleDTO.getSampleCode());
-        return Optional.of(existing);
+        AtomicReference<Optional<SampleDTO>> atomicReference = new AtomicReference<>();
+
+        sampleRepository.findById(sampleId).ifPresentOrElse(foundSample -> {
+            foundSample.setSampleCode(sampleDTO.getSampleCode());
+            foundSample.setStatus(sampleDTO.getStatus());
+            foundSample.setType(sampleDTO.getType());
+            foundSample.setCollectedAt(sampleDTO.getCollectedAt());
+            Sample savedSample = sampleRepository.save(foundSample);
+            atomicReference.set(Optional.of(sampleMapper.sampleToSampleDto(savedSample)));
+        }, () -> atomicReference.set(Optional.empty()));
+
+        return atomicReference.get();
     }
 
     @Override
     public Boolean deleteSampleById(UUID sampleId) {
-        sampleMap.remove(sampleId);
+        if (!sampleRepository.existsById(sampleId)) {
+            return false;
+        }
+        sampleRepository.deleteById(sampleId);
         return true;
     }
 
     @Override
     public Optional<SampleDTO> patchSampleById(UUID sampleId, SampleDTO sampleDTO) {
-        SampleDTO existing = sampleMap.get(sampleId);
-
-        if (existing == null) {
+        if (!sampleRepository.existsById(sampleId))
             return Optional.empty();
-        }
+
+        Sample existing = sampleRepository.findById(sampleId).get();
 
         if (sampleDTO.getSampleCode() != null) {
             existing.setSampleCode(sampleDTO.getSampleCode());
@@ -121,6 +87,7 @@ public class SampleServiceImpl implements SampleService {
             existing.setType(sampleDTO.getType());
         }
 
-        return Optional.of(sampleDTO);
+        SampleDTO savedSample = sampleMapper.sampleToSampleDto(sampleRepository.save(existing));
+        return Optional.of(savedSample);
     }
 }

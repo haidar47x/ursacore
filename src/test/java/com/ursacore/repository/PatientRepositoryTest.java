@@ -60,25 +60,25 @@ class PatientRepositoryTest {
 
     @Test
     void listPatientsByName() {
-        var patients = patientRepository.findAllByNameIsLikeIgnoreCase("%Jon%");
+        var patients = patientRepository.findAllByNameIsLikeIgnoreCase("%Jon%", null);
         assertThat(patients).isNotNull();
         assertThat(patients).isNotEmpty();
-        assertThat(patients.size()).isEqualTo(42);
+        assertThat(patients.getContent().size()).isEqualTo(42);
     }
 
     @Test
     void listPatientsByBloodType() {
-        var patients = patientRepository.findAllByBloodType(BloodType.A_NEGATIVE);
+        var patients = patientRepository.findAllByBloodType(BloodType.A_NEGATIVE, null);
         assertThat(patients).isNotNull();
         assertThat(patients).isNotEmpty();
-        assertThat(patients.size()).isEqualTo(303);
+        assertThat(patients.getContent().size()).isEqualTo(303);
     }
 
     @Test
     void listPatientsByNameAndBloodType() {
-        var patients = patientRepository.findAllByNameIsLikeIgnoreCaseAndBloodType("%Jon%", BloodType.A_NEGATIVE);
+        var patients = patientRepository.findAllByNameIsLikeIgnoreCaseAndBloodType("%Jon%", BloodType.A_NEGATIVE, null);
         assertThat(patients).isNotNull();
         assertThat(patients).isNotEmpty();
-        assertThat(patients.size()).isEqualTo(4);
+        assertThat(patients.getContent().size()).isEqualTo(4);
     }
 }
