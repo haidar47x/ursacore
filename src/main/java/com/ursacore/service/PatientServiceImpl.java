@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -83,7 +84,7 @@ public class PatientServiceImpl implements PatientService {
             queryPageSize = pageSize > 250 ? 250 : pageSize;
         }
 
-        return PageRequest.of(queryPageNum, queryPageSize);
+        return PageRequest.of(queryPageNum, queryPageSize, Sort.by(Sort.Order.asc("name")));
     }
 
     @Override
