@@ -28,6 +28,7 @@ public class PatientServiceImpl implements PatientService {
     private final static int DEFAULT_PAGE_SIZE = 25;
     private final static int DEFAULT_PAGE_NUMBER = 0;
 
+    // TODO: Refactor to specification or criteria queries
     @Override
     public Page<PatientDTO> listPatients(String name, BloodType bloodType, Integer pageNumber, Integer pageSize) {
 
