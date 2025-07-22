@@ -30,6 +30,7 @@ public class TestOrder {
     private Long version;
 
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
