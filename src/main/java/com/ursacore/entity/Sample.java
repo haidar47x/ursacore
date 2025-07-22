@@ -1,7 +1,6 @@
 package com.ursacore.entity;
 
-import com.ursacore.model.SampleStatus;
-import com.ursacore.model.SampleType;
+import com.ursacore.model.TestType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -42,11 +41,7 @@ public class Sample {
 
     @NotNull
     @JdbcTypeCode(SqlTypes.SMALLINT)
-    private SampleType type;
-
-    @NotNull
-    @JdbcTypeCode(SqlTypes.SMALLINT)
-    private SampleStatus status;
+    private TestType type;
 
     @NotNull
     private LocalDateTime collectedAt;

@@ -2,8 +2,7 @@ package com.ursacore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ursacore.model.SampleDTO;
-import com.ursacore.model.SampleStatus;
-import com.ursacore.model.SampleType;
+import com.ursacore.model.TestType;
 import com.ursacore.service.SampleService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -15,7 +14,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -87,8 +88,7 @@ class SampleControllerTest {
         var sampleDto = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .sampleCode("1890")
-                .type(SampleType.BLOOD_TEST)
-                .status(SampleStatus.PROCESSING)
+                .type(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
             .build();
         given(sampleService.saveNewSample(any(SampleDTO.class))).willReturn(sampleDto);
@@ -111,7 +111,7 @@ class SampleControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(sampleDto)))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.length()", is(5)));
+            .andExpect(jsonPath("$.length()", is(4)));
     }
 
     @Test
@@ -119,8 +119,7 @@ class SampleControllerTest {
         var sampleDto = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .sampleCode("2722")
-                .status(SampleStatus.PROCESSING)
-                .type(SampleType.BLOOD_TEST)
+                .type(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
             .build();
 
@@ -153,7 +152,7 @@ class SampleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleDTO)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(5)));
+                .andExpect(jsonPath("$.length()", is(4)));
 
         // We omitted the verification because the test doesn't exercise the service method.
     }
@@ -163,8 +162,7 @@ class SampleControllerTest {
         var sampleDTO = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .sampleCode("2722")
-                .status(SampleStatus.PROCESSING)
-                .type(SampleType.BLOOD_TEST)
+                .type(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .build();
 

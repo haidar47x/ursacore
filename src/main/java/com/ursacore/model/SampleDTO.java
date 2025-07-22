@@ -27,10 +27,7 @@ public class SampleDTO {
     private String sampleCode;
 
     @NotNull
-    private SampleType type;
-
-    @NotNull
-    private SampleStatus status;
+    private TestType type;
 
     @NotNull
     private LocalDateTime collectedAt;

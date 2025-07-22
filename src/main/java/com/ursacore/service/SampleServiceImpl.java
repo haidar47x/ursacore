@@ -49,7 +49,6 @@ public class SampleServiceImpl implements SampleService {
 
         sampleRepository.findById(sampleId).ifPresentOrElse(foundSample -> {
             foundSample.setSampleCode(sampleDTO.getSampleCode());
-            foundSample.setStatus(sampleDTO.getStatus());
             foundSample.setType(sampleDTO.getType());
             foundSample.setCollectedAt(sampleDTO.getCollectedAt());
             Sample savedSample = sampleRepository.save(foundSample);
@@ -77,10 +76,6 @@ public class SampleServiceImpl implements SampleService {
 
         if (sampleDTO.getSampleCode() != null) {
             existing.setSampleCode(sampleDTO.getSampleCode());
-        }
-
-        if (sampleDTO.getStatus() != null) {
-            existing.setStatus(sampleDTO.getStatus());
         }
 
         if (sampleDTO.getType() != null) {

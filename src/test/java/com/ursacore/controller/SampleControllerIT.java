@@ -1,12 +1,10 @@
 package com.ursacore.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ursacore.exception.NotFoundException;
 import com.ursacore.mapper.SampleMapper;
 import com.ursacore.model.SampleDTO;
-import com.ursacore.model.SampleStatus;
-import com.ursacore.model.SampleType;
+import com.ursacore.model.TestType;
 import com.ursacore.repository.SampleRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,9 +23,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -96,8 +92,7 @@ class SampleControllerIT {
         var sampleDtoCode = "202A";
         var sampleDto = SampleDTO.builder()
                 .sampleCode(sampleDtoCode)
-                .status(SampleStatus.PROCESSING)
-                .type(SampleType.BLOOD_TEST)
+                .type(TestType.BLOOD)
             .build();
 
         var responseEntity = sampleController.createSample(sampleDto);
@@ -122,7 +117,7 @@ class SampleControllerIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(5)));
+                .andExpect(jsonPath("$.length()", is(4)));
     }
 
     @Rollback

@@ -79,8 +79,7 @@ public class BootstrapData implements CommandLineRunner {
 
         Sample s1 = Sample.builder()
                 .sampleCode("87ED")
-                .status(SampleStatus.PROCESSING)
-                .type(SampleType.BLOOD_TEST)
+                .type(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
@@ -88,8 +87,7 @@ public class BootstrapData implements CommandLineRunner {
 
         Sample s2 = Sample.builder()
                 .sampleCode("82ED")
-                .status(SampleStatus.PROCESSING)
-                .type(SampleType.BLOOD_TEST)
+                .type(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
@@ -97,8 +95,7 @@ public class BootstrapData implements CommandLineRunner {
 
         Sample s3 = Sample.builder()
                 .sampleCode("85ED")
-                .status(SampleStatus.PROCESSING)
-                .type(SampleType.BLOOD_TEST)
+                .type(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
