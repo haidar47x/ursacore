@@ -15,12 +15,12 @@ import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Getter
-@Setter
-@Entity
-@Builder
 @AllArgsConstructor
+@Builder
+@Entity
+@Getter
 @NoArgsConstructor
+@Setter
 public class Patient {
 
     @Id
