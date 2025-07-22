@@ -1,5 +1,6 @@
 package com.ursacore.repository;
 
+import com.ursacore.entity.Patient;
 import com.ursacore.entity.Sample;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,18 @@ public class MySqlIT {
     @Autowired
     SampleRepository sampleRepository;
 
+    @Autowired
+    PatientRepository patientRepository;
+
     @Test
     void testListSamples() {
         List<Sample> samples = sampleRepository.findAll();
-        assertThat(samples.size()).isEqualTo(2503);
+        assertThat(samples.size()).isEqualTo(3);
+    }
+
+    @Test
+    void testListPatients() {
+        List<Patient> patients = patientRepository.findAll();
+        assertThat(patients.size()).isEqualTo(2503);
     }
 }

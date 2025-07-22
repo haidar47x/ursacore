@@ -49,7 +49,7 @@ public class SampleServiceImpl implements SampleService {
 
         sampleRepository.findById(sampleId).ifPresentOrElse(foundSample -> {
             foundSample.setSampleCode(sampleDTO.getSampleCode());
-            foundSample.setType(sampleDTO.getType());
+            foundSample.setTestType(sampleDTO.getTestType());
             foundSample.setCollectedAt(sampleDTO.getCollectedAt());
             Sample savedSample = sampleRepository.save(foundSample);
             atomicReference.set(Optional.of(sampleMapper.sampleToSampleDto(savedSample)));
@@ -78,8 +78,8 @@ public class SampleServiceImpl implements SampleService {
             existing.setSampleCode(sampleDTO.getSampleCode());
         }
 
-        if (sampleDTO.getType() != null) {
-            existing.setType(sampleDTO.getType());
+        if (sampleDTO.getTestType() != null) {
+            existing.setTestType(sampleDTO.getTestType());
         }
 
         SampleDTO savedSample = sampleMapper.sampleToSampleDto(sampleRepository.save(existing));

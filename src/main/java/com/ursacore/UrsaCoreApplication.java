@@ -9,5 +9,4 @@ public class UrsaCoreApplication {
     public static void main(String[] args) {
         SpringApplication.run(UrsaCoreApplication.class, args);
     }
-
 }

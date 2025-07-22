@@ -1,1 +1,1 @@
-ALTER TABLE patient ADD COLUMN hospital VARCHAR(256) NULL;
+alter table `patient` add column hospital varchar(256) null;

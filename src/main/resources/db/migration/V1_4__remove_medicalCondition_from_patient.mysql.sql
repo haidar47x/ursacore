@@ -1,1 +1,1 @@
-ALTER TABLE patient DROP COLUMN medicalCondition;
+alter table `patient` drop column medicalCondition;

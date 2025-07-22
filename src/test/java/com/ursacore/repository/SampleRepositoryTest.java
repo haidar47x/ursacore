@@ -22,7 +22,7 @@ class SampleRepositoryTest {
     void testSaveSample() {
         var sample = Sample.builder()
                 .sampleCode("872A")
-                .type(TestType.BLOOD)
+                .testType(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .build();
 
@@ -32,7 +32,7 @@ class SampleRepositoryTest {
         assertThat(saved).isNotNull();
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getSampleCode()).isEqualTo(sample.getSampleCode());
-        assertThat(saved.getType()).isEqualTo(sample.getType());
+        assertThat(saved.getTestType()).isEqualTo(sample.getTestType());
     }
 
     @Test
@@ -41,7 +41,7 @@ class SampleRepositoryTest {
             // 4 * 2 > 4
             var sample = Sample.builder()
                     .sampleCode("872A".repeat(2))
-                    .type(TestType.BLOOD)
+                    .testType(TestType.BLOOD)
                     .collectedAt(LocalDateTime.now())
                     .build();
 

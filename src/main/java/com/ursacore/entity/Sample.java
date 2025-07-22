@@ -41,7 +41,7 @@ public class Sample {
 
     @NotNull
     @JdbcTypeCode(SqlTypes.SMALLINT)
-    private TestType type;
+    private TestType testType;
 
     @NotNull
     private LocalDateTime collectedAt;

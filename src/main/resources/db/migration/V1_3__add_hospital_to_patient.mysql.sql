@@ -1,4 +1,3 @@
-ALTER TABLE patient MODIFY COLUMN doctor VARCHAR(128) NULL;
-ALTER TABLE patient MODIFY COLUMN hospital VARCHAR(256) NULL;
-ALTER TABLE patient ADD COLUMN medicalCondition VARCHAR(256) NULL;
-
+alter table `patient` modify column doctor varchar(128) null;
+alter table `patient` modify column hospital varchar(256) null;
+alter table `patient` add column medicalCondition varchar(256) null;

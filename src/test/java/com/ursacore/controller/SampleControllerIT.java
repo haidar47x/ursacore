@@ -92,7 +92,7 @@ class SampleControllerIT {
         var sampleDtoCode = "202A";
         var sampleDto = SampleDTO.builder()
                 .sampleCode(sampleDtoCode)
-                .type(TestType.BLOOD)
+                .testType(TestType.BLOOD)
             .build();
 
         var responseEntity = sampleController.createSample(sampleDto);
@@ -152,7 +152,7 @@ class SampleControllerIT {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(sampleDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(1)));
+                .andExpect(jsonPath("$.length()", is(2)));
     }
 
     @Test

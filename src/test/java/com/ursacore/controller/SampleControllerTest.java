@@ -88,7 +88,7 @@ class SampleControllerTest {
         var sampleDto = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .sampleCode("1890")
-                .type(TestType.BLOOD)
+                .testType(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
             .build();
         given(sampleService.saveNewSample(any(SampleDTO.class))).willReturn(sampleDto);
@@ -119,7 +119,7 @@ class SampleControllerTest {
         var sampleDto = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .sampleCode("2722")
-                .type(TestType.BLOOD)
+                .testType(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
             .build();
 
@@ -162,7 +162,7 @@ class SampleControllerTest {
         var sampleDTO = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .sampleCode("2722")
-                .type(TestType.BLOOD)
+                .testType(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .build();
 

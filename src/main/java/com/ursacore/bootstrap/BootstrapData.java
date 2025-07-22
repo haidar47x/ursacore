@@ -2,11 +2,15 @@ package com.ursacore.bootstrap;
 
 import com.ursacore.entity.Patient;
 import com.ursacore.entity.Sample;
-import com.ursacore.model.*;
+import com.ursacore.model.BloodType;
+import com.ursacore.model.Gender;
+import com.ursacore.model.PatientCsvRecord;
+import com.ursacore.model.TestType;
 import com.ursacore.repository.PatientRepository;
 import com.ursacore.repository.SampleRepository;
 import com.ursacore.service.PatientCsvService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
@@ -18,6 +22,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class BootstrapData implements CommandLineRunner {
 
     private final SampleRepository sampleRepository;
@@ -32,45 +37,60 @@ public class BootstrapData implements CommandLineRunner {
     }
 
     public void initPatientCsvData() throws FileNotFoundException {
-
+        log.info("Checking if patient data already exists...");
+        log.info("Current patient count: {}", patientRepository.count());
         if (patientRepository.count() > 10) return;
 
         File file = ResourceUtils.getFile("classpath:csvdata/patients.csv");
         List<PatientCsvRecord> records = patientCsvService.convertCsv(file);
 
+        if (records != null && !records.isEmpty()) {
+            log.info("Found {} patient records in CSV file.", records.size());
+        } else {
+            log.warn("No patient records found in CSV file.");
+            return;
+        }
+
         records.forEach(record -> {
-            Gender gender = switch (record.getGender().toLowerCase()) {
-                case "male" -> Gender.MALE;
-                case "female" -> Gender.FEMALE;
-                default -> Gender.OTHER;
-            };
+            try {
+                Gender gender = switch (record.getGender().toLowerCase()) {
+                    case "male" -> Gender.MALE;
+                    case "female" -> Gender.FEMALE;
+                    default -> Gender.OTHER;
+                };
 
-            BloodType bloodType = switch (record.getBloodType().toLowerCase()) {
-                case "a+" -> BloodType.A_POSITIVE;
-                case "a-" -> BloodType.A_NEGATIVE;
-                case "b+" -> BloodType.B_POSITIVE;
-                case "b-" -> BloodType.B_NEGATIVE;
-                case "ab+" -> BloodType.AB_POSITIVE;
-                case "ab-" -> BloodType.AB_NEGATIVE;
-                case "o+" -> BloodType.O_POSITIVE;
-                case "o-" -> BloodType.O_NEGATIVE;
-                default -> BloodType.UNKNOWN;
-            };
+                BloodType bloodType = switch (record.getBloodType().toLowerCase()) {
+                    case "a+" -> BloodType.A_POSITIVE;
+                    case "a-" -> BloodType.A_NEGATIVE;
+                    case "b+" -> BloodType.B_POSITIVE;
+                    case "b-" -> BloodType.B_NEGATIVE;
+                    case "ab+" -> BloodType.AB_POSITIVE;
+                    case "ab-" -> BloodType.AB_NEGATIVE;
+                    case "o+" -> BloodType.O_POSITIVE;
+                    case "o-" -> BloodType.O_NEGATIVE;
+                    default -> BloodType.UNKNOWN;
+                };
 
-            Patient patient = Patient.builder()
-                    .name(record.getName())
-                    .age(record.getAge())
-                    .gender(gender)
-                    .bloodType(bloodType)
-                    .doctor(record.getDoctor())
-                    .medicalCondition(record.getMedicalCondition())
-                    .hospital(record.getHospital())
-                    .createdAt(LocalDateTime.now())
-                    .updateAt(LocalDateTime.now())
-                    .build();
+                Patient patient = Patient.builder()
+                        .name(record.getName())
+                        .age(record.getAge())
+                        .gender(gender)
+                        .bloodType(bloodType)
+                        .doctor(record.getDoctor())
+                        .medicalCondition(record.getMedicalCondition())
+                        .hospital(record.getHospital())
+                        .createdAt(LocalDateTime.now())
+                        .updateAt(LocalDateTime.now())
+                        .build();
 
-            patientRepository.save(patient);
+                patientRepository.save(patient);
+            } catch (Exception e) {
+                log.error("Error saving patient record: {}", record, e);
+            }
         });
+
+        patientRepository.flush();
+        log.info("{} patient records imported from CSV file.", records.size());
     }
 
     public void initSampleData() {
@@ -79,7 +99,7 @@ public class BootstrapData implements CommandLineRunner {
 
         Sample s1 = Sample.builder()
                 .sampleCode("87ED")
-                .type(TestType.BLOOD)
+                .testType(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
@@ -87,7 +107,7 @@ public class BootstrapData implements CommandLineRunner {
 
         Sample s2 = Sample.builder()
                 .sampleCode("82ED")
-                .type(TestType.BLOOD)
+                .testType(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
@@ -95,7 +115,7 @@ public class BootstrapData implements CommandLineRunner {
 
         Sample s3 = Sample.builder()
                 .sampleCode("85ED")
-                .type(TestType.BLOOD)
+                .testType(TestType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
