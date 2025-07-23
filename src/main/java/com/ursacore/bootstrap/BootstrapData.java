@@ -44,9 +44,7 @@ public class BootstrapData implements CommandLineRunner {
         File file = ResourceUtils.getFile("classpath:csvdata/patients.csv");
         List<PatientCsvRecord> records = patientCsvService.convertCsv(file);
 
-        if (records != null && !records.isEmpty()) {
-            log.info("Found {} patient records in CSV file.", records.size());
-        } else {
+        if (records == null || records.isEmpty()) {
             log.warn("No patient records found in CSV file.");
             return;
         }
@@ -89,7 +87,6 @@ public class BootstrapData implements CommandLineRunner {
             }
         });
 
-        patientRepository.flush();
         log.info("{} patient records imported from CSV file.", records.size());
     }
 
