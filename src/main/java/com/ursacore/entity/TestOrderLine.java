@@ -1,6 +1,5 @@
 package com.ursacore.entity;
 
-import com.ursacore.model.TestType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -37,8 +36,11 @@ public class TestOrderLine {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @JdbcTypeCode(SqlTypes.SMALLINT)
-    private TestType testType;
+    @ManyToOne
+    private TestOrder testOrder;
+
+    @ManyToOne
+    private Sample sample;
 
     public boolean isNew() {
         return this.id == null;

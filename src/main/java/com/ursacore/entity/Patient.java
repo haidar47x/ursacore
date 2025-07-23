@@ -76,4 +76,8 @@ public class Patient {
 
     @OneToMany(mappedBy = "patient")
     private Set<TestOrder> testOrders;
+
+    public boolean isNew() {
+        return this.id == null;
+    }
 }
