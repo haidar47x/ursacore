@@ -69,7 +69,9 @@ class TestOrderRepositoryTest {
         assertThat(savedOrder.getPatient().getTestOrders()).isNotNull();
 
         // By default, the patient should have no orders if we don't create any
-        // for the patient after the order creation
+        // for the patient after the order creation. However, we're using saveAndFlush(...)
+        // that triggers force flush to the database and the testOrders should be populated
+        // in this instance.
         assertThat(savedOrder.getPatient().getTestOrders().size()).isNotZero();
         assertThat(savedOrder.getPatientRef()).isEqualTo(testOrder.getPatientRef());
     }
