@@ -15,6 +15,7 @@ import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,7 +35,7 @@ public class Patient {
     private UUID id;
 
     @Version
-    private Integer version;
+    private Long version;
 
     // We have both Size and Column length constraints on the value so that
     // we validate the value prior to hitting the database.
@@ -74,8 +75,12 @@ public class Patient {
     @UpdateTimestamp
     private LocalDateTime updateAt;
 
+    // Use our custom initializer to ensure that the Set is never null.
+    // @Builder.Default will initialize the Set to an empty HashSet if
+    // we haven't called the corresponding setter method on the builder.
+    @Builder.Default
     @OneToMany(mappedBy = "patient")
-    private Set<TestOrder> testOrders;
+    private Set<TestOrder> testOrders = new HashSet<>();
 
     public boolean isNew() {
         return this.id == null;

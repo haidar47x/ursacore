@@ -31,7 +31,7 @@ public class Sample {
     private UUID id;
 
     @Version
-    private Integer version;
+    private Long version;
 
     @NotNull
     @NotBlank

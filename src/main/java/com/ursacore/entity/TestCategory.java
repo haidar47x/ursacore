@@ -8,6 +8,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,6 +26,9 @@ public class TestCategory {
     @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
 
+    @Version
+    private Long version;
+
     @NotNull
     @JdbcTypeCode(SqlTypes.CHAR)
     private TestType type;
@@ -36,8 +40,12 @@ public class TestCategory {
     @Column(length= 512)
     private String description;
 
+    @Builder.Default
     @ManyToMany
-    private Set<TestOrder> testOrders;
+    @JoinTable(name = "test_category_test_order",
+        joinColumns = @JoinColumn(name = "test_category_id"),
+        inverseJoinColumns = @JoinColumn(name = "test_order_id"))
+    private Set<TestOrder> testOrders = new HashSet<>();
 
     public boolean isNew() {
         return this.type == null;

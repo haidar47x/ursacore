@@ -152,7 +152,7 @@ class SampleControllerIT {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(sampleDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", is(2)));
+                .andExpect(jsonPath("$.length()", is(1)));
     }
 
     @Test
