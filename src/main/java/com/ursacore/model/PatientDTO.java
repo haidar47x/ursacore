@@ -15,7 +15,7 @@ import java.util.UUID;
 public class PatientDTO {
 
     private UUID id;
-    private Integer version;
+    private Long version;
 
     @NotBlank
     @NotNull

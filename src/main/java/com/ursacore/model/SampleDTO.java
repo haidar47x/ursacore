@@ -19,7 +19,7 @@ public class SampleDTO {
      * Version for a record is used for optimistic locking during database transactions.
      * It's also used for detecting stale updates on the frontend.
      */
-    private Integer version;
+    private Long version;
 
     @NotBlank
     @NotNull
