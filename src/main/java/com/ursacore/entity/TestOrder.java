@@ -2,7 +2,11 @@ package com.ursacore.entity;
 
 import com.ursacore.model.TestType;
 import jakarta.persistence.*;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -50,9 +54,11 @@ public class TestOrder {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @NotNull
     @JdbcTypeCode(SqlTypes.SMALLINT)
     private TestType testType;
 
+    @Column
     private String patientRef;
 
     @ManyToOne
