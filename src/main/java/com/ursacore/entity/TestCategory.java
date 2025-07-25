@@ -1,6 +1,6 @@
 package com.ursacore.entity;
 
-import com.ursacore.model.TestType;
+import com.ursacore.model.SampleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -34,7 +34,7 @@ public class TestCategory {
 
     @NotNull
     @JdbcTypeCode(SqlTypes.CHAR)
-    private TestType type;
+    private SampleType type;
 
     @NotNull
     @Column(length = 64)

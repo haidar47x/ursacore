@@ -16,7 +16,7 @@ public class TestCategoryDTO {
     private Long version;
 
     @NotNull
-    private TestType testType;
+    private SampleType sampleType;
 
     @NotNull
     @Size(max = 64)

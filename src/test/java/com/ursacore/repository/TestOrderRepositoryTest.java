@@ -3,7 +3,7 @@ package com.ursacore.repository;
 import com.ursacore.entity.Patient;
 import com.ursacore.entity.Sample;
 import com.ursacore.entity.TestOrder;
-import com.ursacore.model.TestType;
+import com.ursacore.model.SampleType;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ class TestOrderRepositoryTest {
     @Test
     void testTestOrderRepositoryExists() {
         var testOrder = TestOrder.builder()
-                    .testType(TestType.BLOOD)
+                    .sampleType(SampleType.BLOOD)
                     .patientRef("a patient reference")
                     .patient(patient)
                 .build();
@@ -62,7 +62,7 @@ class TestOrderRepositoryTest {
     @Test
     void testCreateTestOrderManualRelation() {
         var testOrder = TestOrder.builder()
-                    .testType(TestType.BLOOD)
+                    .sampleType(SampleType.BLOOD)
                     .patientRef("a patient reference")
                     .patient(patient)
                 .build();
@@ -98,7 +98,7 @@ class TestOrderRepositoryTest {
     @Test
     void testCreateTestOrderViaFlush() {
         var testOrder = TestOrder.builder()
-                    .testType(TestType.BLOOD)
+                    .sampleType(SampleType.BLOOD)
                     .patientRef("a patient reference")
                     .patient(patient)
                 .build();

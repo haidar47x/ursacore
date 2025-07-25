@@ -1,7 +1,7 @@
 package com.ursacore.repository;
 
 import com.ursacore.entity.Sample;
-import com.ursacore.model.TestType;
+import com.ursacore.model.SampleType;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ class SampleRepositoryTest {
     void testSaveSample() {
         var sample = Sample.builder()
                 .sampleCode("872A")
-                .testType(TestType.BLOOD)
+                .sampleType(SampleType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .build();
 
@@ -32,7 +32,7 @@ class SampleRepositoryTest {
         assertThat(saved).isNotNull();
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getSampleCode()).isEqualTo(sample.getSampleCode());
-        assertThat(saved.getTestType()).isEqualTo(sample.getTestType());
+        assertThat(saved.getSampleType()).isEqualTo(sample.getSampleType());
     }
 
     @Test
@@ -41,7 +41,7 @@ class SampleRepositoryTest {
             // 4 * 2 > 4
             var sample = Sample.builder()
                     .sampleCode("872A".repeat(2))
-                    .testType(TestType.BLOOD)
+                    .sampleType(SampleType.BLOOD)
                     .collectedAt(LocalDateTime.now())
                     .build();
 

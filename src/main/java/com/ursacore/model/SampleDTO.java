@@ -27,7 +27,7 @@ public class SampleDTO {
     private String sampleCode;
 
     @NotNull
-    private TestType testType;
+    private SampleType sampleType;
 
     @NotNull
     private LocalDateTime collectedAt;

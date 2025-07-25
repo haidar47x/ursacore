@@ -2,7 +2,7 @@ package com.ursacore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ursacore.model.SampleDTO;
-import com.ursacore.model.TestType;
+import com.ursacore.model.SampleType;
 import com.ursacore.service.SampleService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -88,7 +88,7 @@ class SampleControllerTest {
         var sampleDto = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .sampleCode("1890")
-                .testType(TestType.BLOOD)
+                .sampleType(SampleType.BLOOD)
                 .collectedAt(LocalDateTime.now())
             .build();
         given(sampleService.saveNewSample(any(SampleDTO.class))).willReturn(sampleDto);
@@ -119,7 +119,7 @@ class SampleControllerTest {
         var sampleDto = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .sampleCode("2722")
-                .testType(TestType.BLOOD)
+                .sampleType(SampleType.BLOOD)
                 .collectedAt(LocalDateTime.now())
             .build();
 
@@ -162,7 +162,7 @@ class SampleControllerTest {
         var sampleDTO = SampleDTO.builder()
                 .id(UUID.randomUUID())
                 .sampleCode("2722")
-                .testType(TestType.BLOOD)
+                .sampleType(SampleType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .build();
 

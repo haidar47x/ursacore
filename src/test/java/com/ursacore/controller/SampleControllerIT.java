@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ursacore.exception.NotFoundException;
 import com.ursacore.mapper.SampleMapper;
 import com.ursacore.model.SampleDTO;
-import com.ursacore.model.TestType;
+import com.ursacore.model.SampleType;
 import com.ursacore.repository.SampleRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,7 +92,7 @@ class SampleControllerIT {
         var sampleDtoCode = "202A";
         var sampleDto = SampleDTO.builder()
                 .sampleCode(sampleDtoCode)
-                .testType(TestType.BLOOD)
+                .sampleType(SampleType.BLOOD)
             .build();
 
         var responseEntity = sampleController.createSample(sampleDto);

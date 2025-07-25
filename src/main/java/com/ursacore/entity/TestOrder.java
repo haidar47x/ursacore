@@ -1,6 +1,6 @@
 package com.ursacore.entity;
 
-import com.ursacore.model.TestType;
+import com.ursacore.model.SampleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -25,12 +25,12 @@ import java.util.UUID;
 @Setter
 public class TestOrder {
 
-    public TestOrder(UUID id, Long version, LocalDateTime createdAt, LocalDateTime updatedAt, TestType testType, String patientRef, Patient patient, Set<TestOrderLine> testOrderLines, Set<TestCategory> categories) {
+    public TestOrder(UUID id, Long version, LocalDateTime createdAt, LocalDateTime updatedAt, SampleType sampleType, String patientRef, Patient patient, Set<TestOrderLine> testOrderLines, Set<TestCategory> categories) {
         this.id = id;
         this.version = version;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.testType = testType;
+        this.sampleType = sampleType;
         this.patientRef = patientRef;
         this.setPatient(patient);
         this.testOrderLines = testOrderLines;
@@ -56,7 +56,7 @@ public class TestOrder {
 
     @NotNull
     @JdbcTypeCode(SqlTypes.SMALLINT)
-    private TestType testType;
+    private SampleType sampleType;
 
     @Column
     private String patientRef;

@@ -3,7 +3,7 @@ package com.ursacore.repository;
 import com.ursacore.entity.Patient;
 import com.ursacore.entity.TestCategory;
 import com.ursacore.entity.TestOrder;
-import com.ursacore.model.TestType;
+import com.ursacore.model.SampleType;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class TestCategoryRepositoryTest {
     void setUp() {
         patient = patientRepository.findAll().getFirst();
         testOrder = TestOrder.builder()
-                .testType(TestType.BLOOD)
+                .sampleType(SampleType.BLOOD)
                 .patient(patient)
                 .patientRef("a patient reference")
             .build();
@@ -44,7 +44,7 @@ class TestCategoryRepositoryTest {
         var testCategory = TestCategory.builder()
                 .categoryName("TSH")
                 .description("Thyroid Stimulating Hormone test for thyroid function")
-                .type(TestType.BLOOD)
+                .type(SampleType.BLOOD)
             .build();
 
         testCategory.getTestOrders().add(testOrder);

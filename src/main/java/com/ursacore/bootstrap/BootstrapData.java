@@ -5,7 +5,7 @@ import com.ursacore.entity.Sample;
 import com.ursacore.model.BloodType;
 import com.ursacore.model.Gender;
 import com.ursacore.model.PatientCsvRecord;
-import com.ursacore.model.TestType;
+import com.ursacore.model.SampleType;
 import com.ursacore.repository.PatientRepository;
 import com.ursacore.repository.SampleRepository;
 import com.ursacore.service.PatientCsvService;
@@ -96,7 +96,7 @@ public class BootstrapData implements CommandLineRunner {
 
         Sample s1 = Sample.builder()
                 .sampleCode("87ED")
-                .testType(TestType.BLOOD)
+                .sampleType(SampleType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
@@ -104,7 +104,7 @@ public class BootstrapData implements CommandLineRunner {
 
         Sample s2 = Sample.builder()
                 .sampleCode("82ED")
-                .testType(TestType.BLOOD)
+                .sampleType(SampleType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
@@ -112,7 +112,7 @@ public class BootstrapData implements CommandLineRunner {
 
         Sample s3 = Sample.builder()
                 .sampleCode("85ED")
-                .testType(TestType.BLOOD)
+                .sampleType(SampleType.BLOOD)
                 .collectedAt(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
