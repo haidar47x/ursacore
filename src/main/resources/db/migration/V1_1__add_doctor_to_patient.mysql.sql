@@ -1,1 +1,0 @@
-alter table `patient` add column doctor varchar(128) null;

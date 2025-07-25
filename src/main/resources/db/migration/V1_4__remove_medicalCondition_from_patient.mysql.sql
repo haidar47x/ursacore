@@ -1,1 +1,0 @@
-alter table `patient` drop column medicalCondition;
