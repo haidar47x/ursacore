@@ -44,6 +44,7 @@ public class TestCategory {
     private String description;
 
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
