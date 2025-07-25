@@ -1,6 +1,6 @@
 package com.ursacore.entity;
 
-import com.ursacore.model.SampleType;
+import com.ursacore.model.TestCategory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -11,8 +11,6 @@ import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -21,7 +19,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @Setter
-public class TestCategory {
+public class LabTest {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -33,14 +31,35 @@ public class TestCategory {
     private Long version;
 
     @NotNull
-    @JdbcTypeCode(SqlTypes.CHAR)
-    private SampleType type;
+    @Column(length = 128, unique = true, nullable = false)
+    private String name;
 
     @NotNull
-    @Column(length = 64)
-    private String categoryName;
+    @Column(length = 16, unique = true, nullable = false)
+    private String code;
 
-    @Column(length= 512)
+    // For tests that require the result to either be
+    // positive or negative, we can use 1 for referenceRangeHigh
+    // and 0 for referenceRangeLow.
+    @NotNull
+    private Double referenceRangeHigh;
+
+    @NotNull
+    private Double referenceRangeLow;
+
+    private String referenceRangeUnit;
+
+    @Column(length = 1024)
+    private String referenceRangeDescription;
+
+    @NotNull
+    private Double price;
+
+    @NotNull
+    @JdbcTypeCode(SqlTypes.SMALLINT)
+    private TestCategory testCategory;
+
+    @Column(length = 512)
     private String description;
 
     @CreationTimestamp
@@ -50,14 +69,10 @@ public class TestCategory {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @Builder.Default
+    /** @Builder.Default
     @ManyToMany
     @JoinTable(name = "test_category_test_order",
         joinColumns = @JoinColumn(name = "test_category_id"),
         inverseJoinColumns = @JoinColumn(name = "test_order_id"))
-    private Set<TestOrder> testOrders = new HashSet<>();
-
-    public boolean isNew() {
-        return this.type == null;
-    }
+    private Set<TestOrder> testOrders = new HashSet<>(); */
 }
