@@ -13,6 +13,8 @@ import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -52,4 +54,8 @@ public class Sample {
 
     @UpdateTimestamp
     private LocalDateTime updateAt;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "sample", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TestOrderLine> testOrderLines = new HashSet<>();
 }

@@ -1,7 +1,7 @@
 package com.ursacore.repository;
 
 import com.ursacore.entity.Patient;
-import com.ursacore.entity.TestCategory;
+import com.ursacore.entity.LabTest;
 import com.ursacore.entity.TestOrder;
 import com.ursacore.model.SampleType;
 import jakarta.transaction.Transactional;
@@ -41,7 +41,7 @@ class TestCategoryRepositoryTest {
     @Transactional
     @Test
     void testCreateNewCategory() {
-        var testCategory = TestCategory.builder()
+        var testCategory = LabTest.builder()
                 .categoryName("TSH")
                 .description("Thyroid Stimulating Hormone test for thyroid function")
                 .type(SampleType.BLOOD)

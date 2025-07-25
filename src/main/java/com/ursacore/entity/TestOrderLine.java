@@ -36,11 +36,21 @@ public class TestOrderLine {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "test_order_id", nullable = false)
     private TestOrder testOrder;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sample_id", nullable = false)
     private Sample sample;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lab_test_id", nullable = false)
+    private LabTest labTest;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "test_result_id")
+    private TestResult testResult;
 
     public boolean isNew() {
         return this.id == null;
